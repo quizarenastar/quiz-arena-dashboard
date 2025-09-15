@@ -1,10 +1,16 @@
-import React from "react";
+import { BrowserRouter as Router } from 'react-router-dom';
+import RoutesComponent from './RoutesComponent';
+import Header from './Components/Header';
+import Footer from './Components/Footer';
 
 const App = () => {
     return (
-        <div>
-            <h1 class="text-3xl font-bold underline">Quiz-Arena Dashboard</h1>
-        </div>
+        <Router>
+            <Header />
+            <RoutesComponent />
+
+            <Footer />
+        </Router>
     );
 };
 
