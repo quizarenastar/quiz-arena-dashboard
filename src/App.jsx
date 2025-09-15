@@ -5,7 +5,7 @@ import Footer from './Components/Footer';
 
 const App = () => {
     return (
-        <Router>
+        <Router basename='/'>
             <Header />
             <RoutesComponent />
 
