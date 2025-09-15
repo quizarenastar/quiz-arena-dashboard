@@ -8,7 +8,6 @@ const App = () => {
         <Router basename='/'>
             <Header />
             <RoutesComponent />
-
             <Footer />
         </Router>
     );
