@@ -1,7 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
-import Home from './Pages/Home.jsx';
-import Login from './Pages/Login.jsx';
-import SignUp from './Pages/SignUp.jsx';
+import Home from './Pages/Home';
+import Login from './Pages/Login';
+import SignUp from './Pages/SignUp';
+import UserList from './Pages/UserList';
+import DashboardUserList from './Pages/dashboardUserList';
+
 
 const RoutesComponent = () => {
     return (
@@ -9,6 +12,8 @@ const RoutesComponent = () => {
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<SignUp />} />
+            <Route path='/userlist' element={<UserList />} />
+            <Route path='/dashboarduserlist' element={<DashboardUserList />} />
         </Routes>
     );
 };
