@@ -11,9 +11,9 @@ import {
     UserPlus,
 } from 'lucide-react';
 
-import signupUser from '../service/AuthService';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../service/AuthService';
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -89,12 +89,16 @@ const SignUp = () => {
                 if (response.token) {
                     console.log('Token would be stored:', response.token);
                 }
+                toast.success('Account created successfully');
                 navigate('/login'); // Redirect to login page after successful signup
             } else {
-                setErrors({ submit: response.message || 'Signup failed' });
+                const message = response.message || 'Signup failed';
+                setErrors({ submit: message });
+                toast.error(message);
             }
         } catch (err) {
-            setErrors({ submit: 'An error occurred during signup' });
+            console.log(err);
+            toast.error('An error occurred during signup');
         } finally {
             setIsSubmitting(false);
         }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from 'lucide-react';
 import AuthService from '../service/AuthService';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -25,12 +26,16 @@ const Login = () => {
                 // Note: In a real app, you'd use proper token storage
                 console.log('Token would be stored:', response.data.token);
                 localStorage.setItem('authToken', response.data.token);
+                toast.success('Logged in successfully');
                 navigate('/');
             } else {
-                setError(response.message || 'Login failed');
+                const message = response.message || 'Login failed';
+                setError(message);
+                toast.error(message);
             }
         } catch (err) {
-            setError('An error occurred during login');
+            console.log(err);
+            toast.error('An error occurred during login');
         } finally {
             setIsLoading(false);
         }
