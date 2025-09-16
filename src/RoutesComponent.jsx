@@ -3,7 +3,7 @@ import Home from './Pages/Home';
 import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
 import UserList from './Pages/UserList';
-import DashboardUserList from './Pages/dashboardUserList';
+import DashboardUserList from './Pages/DashboardUserList';
 
 const RoutesComponent = () => {
     return (
