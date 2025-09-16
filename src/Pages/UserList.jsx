@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserService from '../service/UserService';
+import toast from 'react-hot-toast';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -20,19 +21,26 @@ const UserList = () => {
                 const response = await UserService.getUserList();
                 if (response.success) {
                     setUsers(response.data);
+                    toast.success('Loaded users');
                 } else {
                     setError(response.message);
+                    toast.error(response.message || 'Failed to load users');
                 }
             } else {
                 const response = await UserService.getDashboardUserList();
                 if (response.success) {
                     setDashboardUsers(response.data);
+                    toast.success('Loaded dashboard users');
                 } else {
-                    setError(response.message);
+                    toast.error(
+                        response.message || 'Failed to load dashboard users'
+                    );
                 }
             }
         } catch (err) {
-            setError('Failed to fetch users');
+            console.log(err);
+
+            toast.error('Failed to fetch users');
         } finally {
             setLoading(false);
         }

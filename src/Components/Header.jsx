@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
-import { Menu, X, Brain, Home, BookOpen, Trophy } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+    Menu,
+    X,
+    Brain,
+    Home,
+    BookOpen,
+    Trophy,
+    User,
+    LogOut,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
 import QuizArenaLogo from '../assets/namelogo.png';
 
 function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(
+        Boolean(localStorage.getItem('authToken'))
+    );
 
     const navItems = [
         { href: '/', label: 'Dashboard', icon: Home },
@@ -14,6 +27,32 @@ function Header() {
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
+    };
+
+    useEffect(() => {
+        const syncAuthState = () =>
+            setIsLoggedIn(Boolean(localStorage.getItem('authToken')));
+        syncAuthState();
+        const onStorage = (e) => {
+            if (e.key === 'authToken') {
+                syncAuthState();
+            }
+        };
+        window.addEventListener('storage', onStorage);
+        return () => window.removeEventListener('storage', onStorage);
+    }, []);
+
+    const handleLogout = () => {
+        try {
+            localStorage.removeItem('authToken');
+            setIsLoggedIn(false);
+            toast.success('Logged out');
+            window.location.href = '/login';
+        } catch (err) {
+            console.log(err);
+
+            toast.error('Failed to logout');
+        }
     };
 
     return (
@@ -47,18 +86,45 @@ function Header() {
 
                     {/* Desktop Auth Buttons */}
                     <div className='hidden lg:flex items-center space-x-3'>
-                        <a
-                            href='/login'
-                            className='px-5 py-2.5 text-slate-300 hover:text-white font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
-                        >
-                            Login
-                        </a>
-                        <a
-                            href='/signup'
-                            className='px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25 transform hover:scale-105'
-                        >
-                            Sign Up
-                        </a>
+                        {isLoggedIn ? (
+                            <>
+                                <a
+                                    href='/profile'
+                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium'
+                                    title='Profile'
+                                >
+                                    <User size={18} />
+                                    <span className='hidden xl:inline'>
+                                        Profile
+                                    </span>
+                                </a>
+                                <button
+                                    onClick={handleLogout}
+                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition-all duration-200 font-medium'
+                                    title='Logout'
+                                >
+                                    <LogOut size={18} />
+                                    <span className='hidden xl:inline'>
+                                        Logout
+                                    </span>
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <a
+                                    href='/login'
+                                    className='px-5 py-2.5 text-slate-300 hover:text-white font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
+                                >
+                                    Login
+                                </a>
+                                <a
+                                    href='/signup'
+                                    className='px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25 transform hover:scale-105'
+                                >
+                                    Sign Up
+                                </a>
+                            </>
+                        )}
                     </div>
 
                     {/* Mobile menu button */}
@@ -95,20 +161,43 @@ function Header() {
 
                             {/* Mobile Auth Buttons */}
                             <div className='pt-4 space-y-2 border-t border-white/10 mt-4'>
-                                <a
-                                    href='/login'
-                                    className='block w-full px-4 py-3 text-center text-slate-300 hover:text-white font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
-                                    onClick={() => setIsMenuOpen(false)}
-                                >
-                                    Login
-                                </a>
-                                <a
-                                    href='/signup'
-                                    className='block w-full px-4 py-3 text-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all duration-200 shadow-lg'
-                                    onClick={() => setIsMenuOpen(false)}
-                                >
-                                    Sign Up
-                                </a>
+                                {isLoggedIn ? (
+                                    <>
+                                        <a
+                                            href='/profile'
+                                            className='block w-full px-4 py-3 text-center text-slate-300 hover:text-white font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Profile
+                                        </a>
+                                        <button
+                                            onClick={() => {
+                                                setIsMenuOpen(false);
+                                                handleLogout();
+                                            }}
+                                            className='block w-full px-4 py-3 text-center bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg'
+                                        >
+                                            Logout
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <a
+                                            href='/login'
+                                            className='block w-full px-4 py-3 text-center text-slate-300 hover:text-white font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Login
+                                        </a>
+                                        <a
+                                            href='/signup'
+                                            className='block w-full px-4 py-3 text-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all duration-200 shadow-lg'
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Sign Up
+                                        </a>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
