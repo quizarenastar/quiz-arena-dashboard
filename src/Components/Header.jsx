@@ -1,49 +1,14 @@
 import React, { useState } from 'react';
-import { Menu, X, Brain, Home, MapPin, BookOpen, Sparkles } from 'lucide-react';
-
-// Enhanced Logo SVG component
-const QuizArenaLogo = () => (
-    <svg
-        width='40'
-        height='40'
-        viewBox='0 0 48 48'
-        fill='none'
-        xmlns='http://www.w3.org/2000/svg'
-        className='inline-block align-middle mr-3'
-    >
-        <circle
-            cx='24'
-            cy='24'
-            r='22'
-            fill='url(#gradient)'
-            stroke='rgba(255,255,255,0.2)'
-            strokeWidth='1'
-        />
-        <path
-            d='M24 32v-2m0-2c0-3 4-3.5 4-7a4 4 0 1 0-8 0'
-            stroke='#fff'
-            strokeWidth='2.5'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            fill='none'
-        />
-        <circle cx='24' cy='36' r='1.5' fill='#fff' />
-        <defs>
-            <linearGradient id='gradient' x1='0%' y1='0%' x2='100%' y2='100%'>
-                <stop offset='0%' stopColor='#3b82f6' />
-                <stop offset='100%' stopColor='#1d4ed8' />
-            </linearGradient>
-        </defs>
-    </svg>
-);
+import { Menu, X, Brain, Home, BookOpen, Trophy } from 'lucide-react';
+import QuizArenaLogo from '../assets/namelogo.png';
 
 function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const navItems = [
         { href: '/', label: 'Dashboard', icon: Home },
-        { href: '/states', label: 'States', icon: MapPin },
-        { href: '/quizes', label: 'Quizes', icon: BookOpen },
+        { href: '/stats', label: 'Stats', icon: Trophy },
+        { href: '/quizzes', label: 'Quizzes', icon: BookOpen },
         { href: '/ai-quiz', label: 'AI-Quiz', icon: Brain },
     ];
 
@@ -56,13 +21,8 @@ function Header() {
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='flex items-center justify-between h-16 lg:h-18'>
                     {/* Logo/Brand */}
-                    <div className='flex items-center'>
-                        <div className='flex items-center text-white'>
-                            <QuizArenaLogo />
-                            <span className='text-xl lg:text-2xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent'>
-                                QuizArena
-                            </span>
-                        </div>
+                    <div className='flex items-center h-8 w-20'>
+                        <img src={QuizArenaLogo} alt='Quiz Arena' />
                     </div>
 
                     {/* Desktop Navigation */}
