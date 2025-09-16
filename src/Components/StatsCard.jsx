@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users, UserPlus, Book } from 'lucide-react';
+import UserList from '../Pages/UserList';
 
 function StatsCard() {
     // Mock data
@@ -7,6 +8,8 @@ function StatsCard() {
         totalUsers: 1234,
         totalSignups: 856,
         totalQuizzes: 325,
+        dashboardUserList: 78,
+        UserList: 45,
     };
 
     const cards = [
@@ -28,10 +31,22 @@ function StatsCard() {
             icon: <Book className='w-8 h-8 text-purple-500' />,
             bgColor: 'bg-purple-50',
         },
+        {
+            title: ' dashboardUserList',
+            value: mockStats.totalQuizzes,
+            icon: <Book className='w-8 h-8 text-purple-500' />,
+            bgColor: 'bg-purple-50',
+        },
+        {
+            title: 'UserList',
+            value: mockStats.totalSignups,
+            icon: <UserPlus className='w-8 h-8 text-green-500' />,
+            bgColor: 'bg-green-50',
+        },
     ];
 
     return (
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 p-4'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 p-4 '>
             {cards.map((card, index) => (
                 <div
                     key={index}
