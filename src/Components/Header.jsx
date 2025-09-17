@@ -56,7 +56,7 @@ function Header() {
     };
 
     return (
-        <header className='bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50'>
+        <header className='bg-blue-100 dark:bg-gray-900 text-gray-900 dark:text-black shadow-md transition-colors duration-200'>
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='flex items-center justify-between h-16 lg:h-18'>
                     {/* Logo/Brand */}
@@ -72,7 +72,7 @@ function Header() {
                                 <a
                                     key={item.href}
                                     href={item.href}
-                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium group'
+                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-black hover:text-black hover:bg-black/10 transition-all duration-200 font-medium group'
                                 >
                                     <IconComponent
                                         size={18}
@@ -90,7 +90,8 @@ function Header() {
                             <>
                                 <a
                                     href='/profile'
-                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium'
+                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-black hover:text-black hover:bg-black/10 transition-all duration-200 font-medium
+'
                                     title='Profile'
                                 >
                                     <User size={18} />
@@ -100,7 +101,7 @@ function Header() {
                                 </a>
                                 <button
                                     onClick={handleLogout}
-                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition-all duration-200 font-medium'
+                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-black bg-red-600 hover:bg-red-700 transition-all duration-200 font-medium'
                                     title='Logout'
                                 >
                                     <LogOut size={18} />
@@ -113,13 +114,13 @@ function Header() {
                             <>
                                 <a
                                     href='/login'
-                                    className='px-5 py-2.5 text-slate-300 hover:text-white font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
+                                    className='px-5 py-2.5 text-slate-300 hover:text-black font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
                                 >
                                     Login
                                 </a>
                                 <a
                                     href='/signup'
-                                    className='px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25 transform hover:scale-105'
+                                    className='px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-black font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25 transform hover:scale-105'
                                 >
                                     Sign Up
                                 </a>
@@ -131,7 +132,7 @@ function Header() {
                     <div className='lg:hidden'>
                         <button
                             onClick={toggleMenu}
-                            className='p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200'
+                            className='p-2 rounded-lg text-slate-300 hover:text-black hover:bg-black/10 transition-all duration-200'
                             aria-expanded={isMenuOpen}
                             aria-label='Toggle navigation menu'
                         >
@@ -150,7 +151,7 @@ function Header() {
                                     <a
                                         key={item.href}
                                         href={item.href}
-                                        className='flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium'
+                                        className='flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:text-black hover:bg-black/10 transition-all duration-200 font-medium'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <IconComponent size={20} />
@@ -165,7 +166,7 @@ function Header() {
                                     <>
                                         <a
                                             href='/profile'
-                                            className='block w-full px-4 py-3 text-center text-slate-300 hover:text-white font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
+                                            className='block w-full px-4 py-3 text-center text-slate-300 hover:text-black font-medium transition-colors duration-200 hover:bg-black/5 rounded-lg '
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Profile
@@ -175,7 +176,7 @@ function Header() {
                                                 setIsMenuOpen(false);
                                                 handleLogout();
                                             }}
-                                            className='block w-full px-4 py-3 text-center bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg'
+                                            className='block w-full px-4 py-3 text-center bg-red-600 hover:bg-red-700 text-black font-medium rounded-lg transition-all duration-200 shadow-lg'
                                         >
                                             Logout
                                         </button>
@@ -184,14 +185,14 @@ function Header() {
                                     <>
                                         <a
                                             href='/login'
-                                            className='block w-full px-4 py-3 text-center text-slate-300 hover:text-white font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
+                                            className='block w-full px-4 py-3 text-center text-slate-300 hover:text-black font-medium transition-colors duration-200 hover:bg-black/5 rounded-lg'
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Login
                                         </a>
                                         <a
                                             href='/signup'
-                                            className='block w-full px-4 py-3 text-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all duration-200 shadow-lg'
+                                            className='block w-full px-4 py-3 text-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-black font-medium rounded-lg transition-all duration-200 shadow-lg'
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Sign Up

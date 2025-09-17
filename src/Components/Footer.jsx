@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
     return (
-        <footer className='bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50'>
+        <footer className='bg-blue-100 dark:bg-gray-900 text-gray-900 dark:text-black shadow-md transition-colors duration-200'>
             <div className='container mx-auto flex flex-col md:flex-row items-center justify-between px-4'>
                 {/* Left Side (now empty) */}
                 <div className='mb-4 md:mb-0 text-left w-full md:w-1/3'></div>

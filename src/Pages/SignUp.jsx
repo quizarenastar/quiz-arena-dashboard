@@ -120,9 +120,9 @@ const SignUp = () => {
         <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 p-4 sm:p-6 lg:p-8'>
             {/* Background decorative elements */}
             <div className='absolute inset-0 overflow-hidden pointer-events-none'>
-                <div className='absolute top-1/4 left-1/4 w-72 h-72 bg-blue-300 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse'></div>
-                <div className='absolute top-3/4 right-1/4 w-96 h-96 bg-purple-300 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse delay-1000'></div>
-                <div className='absolute bottom-1/4 left-1/2 w-80 h-80 bg-indigo-300 dark:bg-indigo-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse delay-500'></div>
+                <div className='absolute top-1/4 left-1/4 w-72 h-40 bg-blue-300 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse'></div>
+                <div className='absolute top-3/4 right-1/4 w-96 h-40 bg-purple-300 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse delay-1000'></div>
+                <div className='absolute bottom-1/4 left-1/2 w-80 h-40 bg-indigo-300 dark:bg-indigo-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse delay-500'></div>
             </div>
 
             <div className='relative w-full max-w-lg mx-auto'>
@@ -130,7 +130,7 @@ const SignUp = () => {
                 <div className='backdrop-blur-lg bg-white/70 dark:bg-gray-800/70 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden'>
                     {/* Header */}
                     <div className='px-8 pt-8 pb-6 text-center'>
-                        <div className='w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg'>
+                        <div className='w-16 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg'>
                             <UserPlus className='w-8 h-8 text-white' />
                         </div>
                         <h1 className='text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent'>
