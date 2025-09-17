@@ -1,13 +1,13 @@
 import ApiUrl from '../config/ApiUrl';
+import { authHeader } from '../utils/authToken';
 
 const UserService = {
     getUserList: async () => {
         try {
-            const token = localStorage.getItem('authToken');
             const response = await fetch(ApiUrl.USERS.USER_LIST, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
+                    ...authHeader(),
                 },
             });
             return await response.json();
@@ -18,11 +18,10 @@ const UserService = {
 
     getDashboardUserList: async () => {
         try {
-            const token = localStorage.getItem('authToken');
             const response = await fetch(ApiUrl.USERS.DASHBOARD_USER_LIST, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
+                    ...authHeader(),
                 },
             });
             return await response.json();

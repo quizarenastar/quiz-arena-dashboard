@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
     Menu,
     X,
@@ -10,13 +10,12 @@ import {
     LogOut,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { hasAuthToken, clearAuthToken } from '../utils/authToken';
 import QuizArenaLogo from '../assets/namelogo.png';
 
 function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(
-        Boolean(localStorage.getItem('authToken'))
-    );
+    const isLoggedIn = hasAuthToken();
 
     const navItems = [
         { href: '/', label: 'Dashboard', icon: Home },
@@ -29,28 +28,13 @@ function Header() {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    useEffect(() => {
-        const syncAuthState = () =>
-            setIsLoggedIn(Boolean(localStorage.getItem('authToken')));
-        syncAuthState();
-        const onStorage = (e) => {
-            if (e.key === 'authToken') {
-                syncAuthState();
-            }
-        };
-        window.addEventListener('storage', onStorage);
-        return () => window.removeEventListener('storage', onStorage);
-    }, []);
-
     const handleLogout = () => {
         try {
-            localStorage.removeItem('authToken');
-            setIsLoggedIn(false);
+            clearAuthToken();
             toast.success('Logged out');
             window.location.href = '/login';
         } catch (err) {
             console.log(err);
-
             toast.error('Failed to logout');
         }
     };
