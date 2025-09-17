@@ -8,6 +8,7 @@ import {
     Trophy,
     User,
     LogOut,
+    MessageSquare,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { hasAuthToken, clearAuthToken } from '../utils/authToken';
@@ -22,6 +23,7 @@ function Header() {
         { href: '/stats', label: 'Stats', icon: Trophy },
         { href: '/quizzes', label: 'Quizzes', icon: BookOpen },
         { href: '/ai-quiz', label: 'AI-Quiz', icon: Brain },
+        { href: '/contacts', label: 'Contacts', icon: MessageSquare },
     ];
 
     const toggleMenu = () => {

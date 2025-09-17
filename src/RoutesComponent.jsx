@@ -5,6 +5,7 @@ import SignUp from './Pages/SignUp';
 import UserList from './Pages/UserList';
 import DashboardUserList from './Pages/DashboardUserList';
 import Profile from './Pages/Profile';
+import ContactList from './Pages/ContactList';
 import ProtectedRoute from './Components/ProtectedRoute';
 import PublicRoute from './Components/PublicRoute';
 
@@ -38,6 +39,7 @@ const RoutesComponent = () => {
                     element={<DashboardUserList />}
                 />
                 <Route path='/profile' element={<Profile />} />
+                <Route path='/contacts' element={<ContactList />} />
             </Route>
         </Routes>
     );
