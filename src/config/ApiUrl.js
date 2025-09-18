@@ -1,4 +1,5 @@
-const BASE_URL = 'https://api.quizarena.in/dashboard/v1';
+const BASE_URL =
+    import.meta.env.VITE_API_URL || 'http://localhost:5000/dashboard/v1';
 
 const ApiUrl = {
     AUTH: {
@@ -8,6 +9,11 @@ const ApiUrl = {
     USERS: {
         USER_LIST: `${BASE_URL}/users/userlist`,
         DASHBOARD_USER_LIST: `${BASE_URL}/users/dashboarduserlist`,
+    },
+
+    CONTACT: {
+        CONTACT_LIST: `${BASE_URL}/contact`,
+        UPDATE_STATUS: (contactId) => `${BASE_URL}/contact/${contactId}/status`,
     },
 };
 

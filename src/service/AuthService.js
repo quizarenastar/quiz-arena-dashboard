@@ -12,6 +12,7 @@ const AuthService = {
             });
             return await response.json();
         } catch (error) {
+            console.error(error);
             throw new Error('Login service failed');
         }
     },
@@ -27,6 +28,7 @@ const AuthService = {
             });
             return await response.json();
         } catch (error) {
+            console.error(error);
             throw new Error('Signup service failed');
         }
     },
