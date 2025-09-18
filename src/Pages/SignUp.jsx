@@ -120,9 +120,9 @@ const SignUp = () => {
         <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 p-4 sm:p-6 lg:p-8'>
             {/* Background decorative elements */}
             <div className='absolute inset-0 overflow-hidden pointer-events-none'>
-                <div className='absolute top-1/4 left-1/4 w-72 h-40 bg-blue-300 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse'></div>
-                <div className='absolute top-3/4 right-1/4 w-96 h-40 bg-purple-300 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse delay-1000'></div>
-                <div className='absolute bottom-1/4 left-1/2 w-80 h-40 bg-indigo-300 dark:bg-indigo-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse delay-500'></div>
+                <div className='absolute top-1/4 left-1/4 w-72 h-40   rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse'></div>
+                <div className='absolute top-3/4 right-1/4 w-96 h-40  rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse delay-1000'></div>
+                <div className='absolute bottom-1/4 left-1/2 w-80 h-40   rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-20 animate-pulse delay-500'></div>
             </div>
 
             <div className='relative w-full max-w-lg mx-auto'>

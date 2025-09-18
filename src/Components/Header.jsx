@@ -58,7 +58,7 @@ function Header() {
                                 <a
                                     key={item.href}
                                     href={item.href}
-                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-black hover:text-black hover:bg-black/10 transition-all duration-200 font-medium group'
+                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-black transition-all duration-200 font-medium group'
                                 >
                                     <IconComponent
                                         size={18}
@@ -76,7 +76,7 @@ function Header() {
                             <>
                                 <a
                                     href='/profile'
-                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-black hover:text-black hover:bg-black/10 transition-all duration-200 font-medium
+                                    className='flex items-center space-x-2 px-4 py-2 rounded-lg text-blacktransition-all duration-200 font-medium
 '
                                     title='Profile'
                                 >
@@ -100,7 +100,7 @@ function Header() {
                             <>
                                 <a
                                     href='/login'
-                                    className='px-5 py-2.5 text-slate-300 hover:text-black font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
+                                    className='px-5 py-2.5 text-slate-300 font-medium transition-colors duration-200 hover:bg-white/5 rounded-lg'
                                 >
                                     Login
                                 </a>
@@ -118,7 +118,7 @@ function Header() {
                     <div className='lg:hidden'>
                         <button
                             onClick={toggleMenu}
-                            className='p-2 rounded-lg text-slate-300 hover:text-black hover:bg-black/10 transition-all duration-200'
+                            className='p-2 rounded-lg text-black transition-all duration-200'
                             aria-expanded={isMenuOpen}
                             aria-label='Toggle navigation menu'
                         >
@@ -137,7 +137,7 @@ function Header() {
                                     <a
                                         key={item.href}
                                         href={item.href}
-                                        className='flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:text-black hover:bg-black/10 transition-all duration-200 font-medium'
+                                        className='flex items-center space-x-3 px-4 py-3 rounded-lg  text-black  transition-all duration-200 font-medium'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <IconComponent size={20} />
@@ -152,7 +152,7 @@ function Header() {
                                     <>
                                         <a
                                             href='/profile'
-                                            className='block w-full px-4 py-3 text-center text-slate-300 hover:text-black font-medium transition-colors duration-200 hover:bg-black/5 rounded-lg '
+                                            className='block w-full px-4 py-3 text-center text-black font-medium transition-colors duration-200 rounded-lg '
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Profile
@@ -171,7 +171,7 @@ function Header() {
                                     <>
                                         <a
                                             href='/login'
-                                            className='block w-full px-4 py-3 text-center text-slate-300 hover:text-black font-medium transition-colors duration-200 hover:bg-black/5 rounded-lg'
+                                            className='block w-full px-4 py-3 text-center text-black font-medium transition-colors duration-200  rounded-lg'
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Login
