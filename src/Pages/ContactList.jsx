@@ -114,13 +114,10 @@ const ContactList = () => {
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 {/* Header */}
                 <div className='mb-8 text-center'>
-                    <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-4'>
-                        <MessageSquare className='w-8 h-8 text-white' />
-                    </div>
-                    <h1 className='text-4xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2'>
+                    <h1 className='text-4xl font-bold bg-gradient-to-r from-blue-800 to-gray-600 bg-clip-text text-transparent'>
                         Contact Requests
                     </h1>
-                    <p className='text-gray-600 dark:text-gray-400 max-w-md mx-auto'>
+                    <p className='text-gray-900 dark:text-gray-400 max-w-md mx-auto'>
                         Manage and respond to all contact requests efficiently
                     </p>
                 </div>
@@ -130,7 +127,7 @@ const ContactList = () => {
                     <div className='relative max-w-md w-full'>
                         <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
                             <svg
-                                className='h-5 w-5 text-indigo-400'
+                                className='h-5 w-5 '
                                 fill='none'
                                 viewBox='0 0 24 24'
                                 stroke='currentColor'
@@ -146,11 +143,11 @@ const ContactList = () => {
                         <input
                             type='text'
                             placeholder='Search by name, email, or subject...'
-                            className='block w-full pl-12 pr-4 py-4 border border-transparent rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg dark:bg-gray-800/80 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:bg-white dark:focus:bg-gray-800 transition-all duration-200'
-                            value={searchTerm}
+                            className='block w-full pl-12 pr-4 py-4 border shadow-md transition-colors duration-200'
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <div className='absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 pointer-events-none'></div>
+
+                        <div className='absolute inset-0 rounded-2xl   pointer-events-none'></div>
                     </div>
                 </div>
 
