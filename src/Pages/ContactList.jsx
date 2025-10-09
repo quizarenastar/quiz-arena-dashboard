@@ -124,7 +124,7 @@ const ContactList = () => {
 
                 {/* Search */}
                 <div className='mb-8 flex justify-center'>
-                    <div className='relative max-w-md w-full'>
+                    <div className='relative max-w-md w-full bg-blue-100 border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-2xl shadow-lg    '>
                         <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
                             <svg
                                 className='h-5 w-5 '
@@ -182,7 +182,10 @@ const ContactList = () => {
                                                 Message
                                             </th>
                                             <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
-                                                Date
+                                                Created At
+                                            </th>
+                                            <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
+                                                Updated At
                                             </th>
                                             <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
                                                 Status
@@ -250,6 +253,13 @@ const ContactList = () => {
                                                         <div className='text-sm text-gray-500 dark:text-gray-400'>
                                                             {formatDate(
                                                                 contact.createdAt
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className='px-6 py-6 whitespace-nowrap'>
+                                                        <div className='text-sm text-gray-500 dark:text-gray-400'>
+                                                            {formatDate(
+                                                                contact.updatedAt
                                                             )}
                                                         </div>
                                                     </td>
@@ -348,8 +358,27 @@ const ContactList = () => {
                                                 {contact.message}
                                             </div>
                                         </div>
-                                        <div className='text-xs text-gray-500 dark:text-gray-400'>
-                                            {formatDate(contact.createdAt)}
+                                        <div className='grid grid-cols-2 gap-4'>
+                                            <div>
+                                                <div className='text-xs font-medium text-gray-500 dark:text-gray-400'>
+                                                    Created At
+                                                </div>
+                                                <div className='text-xs text-gray-500 dark:text-gray-400'>
+                                                    {formatDate(
+                                                        contact.createdAt
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className='text-xs font-medium text-gray-500 dark:text-gray-400'>
+                                                    Updated At
+                                                </div>
+                                                <div className='text-xs text-gray-500 dark:text-gray-400'>
+                                                    {formatDate(
+                                                        contact.updatedAt
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
