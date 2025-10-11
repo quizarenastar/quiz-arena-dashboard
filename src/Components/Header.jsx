@@ -9,6 +9,7 @@ import {
     User,
     LogOut,
     MessageSquare,
+    Shield,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { hasAuthToken, clearAuthToken } from '../utils/authToken';
@@ -20,10 +21,10 @@ function Header() {
 
     const navItems = [
         { href: '/', label: 'Dashboard', icon: Home },
-        { href: '/stats', label: 'Stats', icon: Trophy },
-        { href: '/quizzes', label: 'Quizzes', icon: BookOpen },
-        { href: '/ai-quiz', label: 'AI-Quiz', icon: Brain },
+        { href: '/quiz-management', label: 'Quiz Management', icon: Shield },
+        { href: '/userlist', label: 'Users', icon: User },
         { href: '/contacts', label: 'Contacts', icon: MessageSquare },
+        { href: '/stats', label: 'Stats', icon: Trophy },
     ];
 
     const toggleMenu = () => {
