@@ -3,7 +3,7 @@ import StatsCard from '../Components/StatsCard';
 
 const Home = () => {
     return (
-        <div className='container mx-auto min-h-screen'>
+        <div className='container mx-auto bg-blue-50 dark:bg-gray-900 min-h-screen transition-colors duration-200'>
             <StatsCard />
         </div>
     );

@@ -44,7 +44,7 @@ const DashboardUserList = () => {
         <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 {/* Header */}
-                <div className='mb-8 text-center'>
+                {/* <div className='mb-8 text-center'>
                     <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-4'>
                         <svg
                             className='w-8 h-8 text-white'
@@ -66,7 +66,7 @@ const DashboardUserList = () => {
                     <p className='text-gray-600 dark:text-gray-400 max-w-md mx-auto'>
                         Manage and view all dashboard users with ease
                     </p>
-                </div>
+                </div> */}
 
                 {/* Search */}
                 <div className='mb-8 flex justify-center'>
@@ -126,6 +126,15 @@ const DashboardUserList = () => {
                                         <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
                                             Role
                                         </th>
+                                        <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
+                                            Created At
+                                        </th>
+                                        <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
+                                            Updated At
+                                        </th>
+                                        {/* <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
+                                            Version
+                                        </th> */}
                                     </tr>
                                 </thead>
                                 <tbody className='bg-white/50 dark:bg-gray-800/50 divide-y divide-gray-200/30 dark:divide-gray-700/30'>
@@ -184,6 +193,28 @@ const DashboardUserList = () => {
                                                     {user.role || 'User'}
                                                 </span>
                                             </td>
+                                            <td className='px-6 py-6 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400'>
+                                                {new Date(
+                                                    user.createdAt
+                                                ).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                })}
+                                            </td>
+                                            <td className='px-6 py-6 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400'>
+                                                {new Date(
+                                                    user.updatedAt
+                                                ).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                })}
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -220,22 +251,64 @@ const DashboardUserList = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='flex items-center justify-between'>
-                                        <span
-                                            className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium shadow-sm ${
-                                                user.active
-                                                    ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white'
-                                                    : 'bg-gradient-to-r from-red-400 to-pink-500 text-white'
-                                            }`}
-                                        >
-                                            <span className='w-2 h-2 mr-2 rounded-full bg-white/80'></span>
-                                            {user.active
-                                                ? 'Active'
-                                                : 'Inactive'}
-                                        </span>
-                                        <span className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 dark:from-indigo-900/30 dark:to-purple-900/30 dark:text-indigo-300'>
-                                            {user.role || 'User'}
-                                        </span>
+                                    <div className='space-y-4'>
+                                        <div className='flex items-center justify-between'>
+                                            <span
+                                                className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium shadow-sm ${
+                                                    user.active
+                                                        ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white'
+                                                        : 'bg-gradient-to-r from-red-400 to-pink-500 text-white'
+                                                }`}
+                                            >
+                                                <span className='w-2 h-2 mr-2 rounded-full bg-white/80'></span>
+                                                {user.active
+                                                    ? 'Active'
+                                                    : 'Inactive'}
+                                            </span>
+                                            <span className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 dark:from-indigo-900/30 dark:to-purple-900/30 dark:text-indigo-300'>
+                                                {user.role || 'User'}
+                                            </span>
+                                        </div>
+                                        <div className='grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400'>
+                                            <div>
+                                                <div className='text-xs font-medium text-gray-500 dark:text-gray-400'>
+                                                    Created
+                                                </div>
+                                                <div>
+                                                    {new Date(
+                                                        user.createdAt
+                                                    ).toLocaleDateString(
+                                                        'en-US',
+                                                        {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                        }
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className='text-xs font-medium text-gray-500 dark:text-gray-400'>
+                                                    Updated
+                                                </div>
+                                                <div>
+                                                    {new Date(
+                                                        user.updatedAt
+                                                    ).toLocaleDateString(
+                                                        'en-US',
+                                                        {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                        }
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
