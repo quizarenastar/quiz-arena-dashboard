@@ -6,6 +6,7 @@ import UserList from './Pages/UserList';
 import DashboardUserList from './Pages/DashboardUserList';
 import Profile from './Pages/Profile';
 import ContactList from './Pages/ContactList';
+import QuizManagement from './Pages/QuizManagement';
 import NotFound from './Pages/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
 import PublicRoute from './Components/PublicRoute';
@@ -41,6 +42,7 @@ const RoutesComponent = () => {
                 />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/contacts' element={<ContactList />} />
+                <Route path='/quiz-management' element={<QuizManagement />} />
             </Route>
             <Route path='*' element={<NotFound />} />
         </Routes>
