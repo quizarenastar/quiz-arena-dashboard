@@ -10,7 +10,7 @@ import {
     Search,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import AdminService from '../service/AdminService';
+import QuizService from '../service/QuizService';
 
 const QuizManagement = () => {
     const [quizzes, setQuizzes] = useState([]);
@@ -32,8 +32,8 @@ const QuizManagement = () => {
             setLoading(true);
             const response =
                 filter === 'pending'
-                    ? await AdminService.getPendingQuizzes()
-                    : await AdminService.getAllQuizzes({ status: filter });
+                    ? await QuizService.getPendingQuizzes()
+                    : await QuizService.getAllQuizzes({ status: filter });
             setQuizzes(response.data.quizzes || []);
         } catch (error) {
             toast.error(error.message || 'Failed to fetch quizzes');
@@ -46,7 +46,7 @@ const QuizManagement = () => {
     const handleApproveQuiz = async (quizId, feedback = '') => {
         setActionLoading(true);
         try {
-            await AdminService.approveQuiz(quizId, feedback);
+            await QuizService.approveQuiz(quizId, feedback);
             toast.success('Quiz approved successfully!');
             fetchQuizzes();
             setShowQuizModal(false);
@@ -66,7 +66,7 @@ const QuizManagement = () => {
 
         setActionLoading(true);
         try {
-            await AdminService.rejectQuiz(quizId, reason);
+            await QuizService.rejectQuiz(quizId, reason);
             toast.success('Quiz rejected successfully!');
             fetchQuizzes();
             setShowQuizModal(false);
@@ -80,7 +80,7 @@ const QuizManagement = () => {
 
     const openQuizModal = async (quiz) => {
         try {
-            const response = await AdminService.getQuizDetails(quiz._id);
+            const response = await QuizService.getQuizDetails(quiz._id);
             setSelectedQuiz(response.data.quiz);
             setShowQuizModal(true);
         } catch (error) {
@@ -305,7 +305,7 @@ const QuizManagement = () => {
                                                 {quiz.status === 'pending' && (
                                                     <div className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
                                                         Submitted{' '}
-                                                        {AdminService.formatDate(
+                                                        {QuizService.formatDate(
                                                             quiz.createdAt
                                                         )}
                                                     </div>

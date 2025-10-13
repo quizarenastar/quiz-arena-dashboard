@@ -6,12 +6,41 @@ function StatsCard() {
 
     // Mock data (replace with real values when API is ready)
     const mockStats = {
+        quizzes: 120,
         contacts: 325,
         dashboardUserList: 78,
         userList: 45,
+        walletTransaction: 50,
     };
 
     const cards = [
+        {
+            key: 'quizzes',
+            title: 'Total Quizzes',
+            value: mockStats.quizzes,
+            icon: (
+                <div className='rounded-xl bg-yellow-100/70 dark:bg-yellow-900/30 p-3'>
+                    <Users className='w-7 h-7 text-yellow-600 dark:text-yellow-400' />
+                </div>
+            ),
+            to: '/quiz-management',
+            gradient:
+                'from-yellow-50 to-yellow-100 dark:from-slate-800 dark:to-slate-800/60',
+        },
+        {
+            key: 'walletTransactions',
+            title: 'Wallet Transactions',
+            value: mockStats.walletTransaction,
+            icon: (
+                <div className='rounded-xl bg-emerald-100/70 dark:bg-emerald-900/30 p-3'>
+                    <UserPlus className='w-7 h-7 text-emerald-600 dark:text-emerald-400' />
+                </div>
+            ),
+            to: '/wallet-management',
+            gradient:
+                'from-emerald-50 to-emerald-100 dark:from-slate-800 dark:to-slate-800/60',
+        },
+
         {
             key: 'contacts',
             title: 'Total Contacts',

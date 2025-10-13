@@ -12,6 +12,7 @@ const UserService = {
             });
             return await response.json();
         } catch (error) {
+            console.error(error);
             throw new Error('Failed to fetch user list');
         }
     },
@@ -26,6 +27,7 @@ const UserService = {
             });
             return await response.json();
         } catch (error) {
+            console.error(error);
             throw new Error('Failed to fetch dashboard user list');
         }
     },
