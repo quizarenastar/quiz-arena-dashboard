@@ -15,7 +15,7 @@ import QuizService from '../service/QuizService';
 const QuizManagement = () => {
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('pending');
+    const [filter, setFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedQuiz, setSelectedQuiz] = useState(null);
     const [showQuizModal, setShowQuizModal] = useState(false);
@@ -127,7 +127,7 @@ const QuizManagement = () => {
     }
 
     return (
-        <div className='min-h-screen bg-gray-50 dark:bg-gray-900 p-6'>
+        <div className='min-h-screen p-6'>
             <div className='max-w-7xl mx-auto'>
                 {/* Header */}
                 <div className='mb-6'>

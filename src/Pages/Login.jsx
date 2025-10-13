@@ -26,6 +26,10 @@ const Login = () => {
                 // Note: In a real app, you'd use proper token storage
                 console.log('Token would be stored:', response.data.token);
                 localStorage.setItem('authToken', response.data.token);
+
+                // Dispatch custom event to notify components of auth change
+                window.dispatchEvent(new Event('authChange'));
+
                 toast.success('Logged in successfully');
                 navigate('/');
             } else {

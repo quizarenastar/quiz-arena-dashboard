@@ -19,7 +19,6 @@ const DashboardUserList = () => {
             const response = await UserService.getDashboardUserList();
             if (response.success) {
                 setDashboardUsers(response.data);
-                toast.success('Loaded dashboard users');
             } else {
                 setError(response.message);
                 toast.error(
@@ -43,31 +42,14 @@ const DashboardUserList = () => {
     return (
         <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-                {/* Header */}
-                {/* <div className='mb-8 text-center'>
-                    <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-4'>
-                        <svg
-                            className='w-8 h-8 text-white'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                        >
-                            <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth={2}
-                                d='M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z'
-                            />
-                        </svg>
-                    </div>
-                    <h1 className='text-4xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2'>
-                        Dashboard Users
+                <div className='mb-6'>
+                    <h1 className='text-3xl font-bold text-gray-900 dark:text-white mb-2'>
+                        Admin Management
                     </h1>
-                    <p className='text-gray-600 dark:text-gray-400 max-w-md mx-auto'>
-                        Manage and view all dashboard users with ease
+                    <p className='text-gray-600 dark:text-gray-400'>
+                        Manage user accounts and permissions
                     </p>
-                </div> */}
-
+                </div>
                 {/* Search */}
                 <div className='mb-8 flex justify-center'>
                     <div className='relative max-w-md w-full'>
