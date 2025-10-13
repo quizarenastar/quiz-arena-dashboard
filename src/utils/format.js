@@ -6,6 +6,7 @@ export function formatAmount(amount) {
     }).format(amount);
 }
 
+//will be common later
 export function getStatusColor(status) {
     const colors = {
         approved: 'green',
@@ -19,6 +20,7 @@ export function getStatusColor(status) {
     return colors[status] || 'gray';
 }
 
+//will be common later
 export function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('en-IN', {
         year: 'numeric',
