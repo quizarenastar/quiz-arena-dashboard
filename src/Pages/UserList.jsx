@@ -1,26 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import UserService from '../service/UserService';
 import toast from 'react-hot-toast';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
-    const [dashboardUsers, setDashboardUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('all'); // 'all' or 'dashboard'
+
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'active', 'blocked'
     const [balanceRange, setBalanceRange] = useState({ min: '', max: '' });
-    const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
         fetchUsers();
-    }, [activeTab]);
-
-    // Automatically apply filters when any filter changes
-    useEffect(() => {
-        setIsSearching(false);
-    }, [searchTerm, statusFilter, balanceRange]);
+    }, []);
 
     // Filter users based on all criteria
     const filterUsers = (users) => {
@@ -58,25 +51,12 @@ const UserList = () => {
         setLoading(true);
         setError(null);
         try {
-            if (activeTab === 'all') {
-                const response = await UserService.getUserList();
-                if (response.success) {
-                    setUsers(response.data);
-                    toast.success('Loaded users');
-                } else {
-                    setError(response.message);
-                    toast.error(response.message || 'Failed to load users');
-                }
+            const response = await UserService.getUserList();
+            if (response.success) {
+                setUsers(response.data);
             } else {
-                const response = await UserService.getDashboardUserList();
-                if (response.success) {
-                    setDashboardUsers(response.data);
-                    toast.success('Loaded dashboard users');
-                } else {
-                    toast.error(
-                        response.message || 'Failed to load dashboard users'
-                    );
-                }
+                setError(response.message);
+                toast.error(response.message || 'Failed to load users');
             }
         } catch (err) {
             console.log(err);
@@ -231,8 +211,16 @@ const UserList = () => {
     };
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900'>
+        <div className='min-h-screen '>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+                <div className='mb-6'>
+                    <h1 className='text-3xl font-bold text-gray-900 dark:text-white mb-2'>
+                        User Management
+                    </h1>
+                    <p className='text-gray-600 dark:text-gray-400'>
+                        Manage user accounts and permissions
+                    </p>
+                </div>
                 {/* Search and Filters */}
                 <div className='mb-8'>
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
@@ -331,9 +319,7 @@ const UserList = () => {
                         {error}
                     </div>
                 ) : (
-                    renderUserTable(
-                        activeTab === 'all' ? users : dashboardUsers
-                    )
+                    renderUserTable(users.length > 0 ? users : [])
                 )}
             </div>
         </div>

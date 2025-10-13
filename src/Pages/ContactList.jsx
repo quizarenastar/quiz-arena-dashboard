@@ -26,7 +26,6 @@ const ContactList = () => {
             const response = await ContactService.getContactList();
             if (response.success) {
                 setContacts(response.data);
-                toast.success('Contact requests loaded successfully');
             } else {
                 setError(response.message);
                 toast.error(
@@ -110,15 +109,15 @@ const ContactList = () => {
     };
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900'>
+        <div className='min-h-screen '>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 {/* Header */}
-                <div className='mb-8 text-center'>
-                    <h1 className='text-4xl font-bold bg-gradient-to-r from-blue-800 to-gray-600 bg-clip-text text-transparent'>
-                        Contact Requests
+                <div className='mb-6'>
+                    <h1 className='text-3xl font-bold text-gray-900 dark:text-white mb-2'>
+                        Contacts Management
                     </h1>
-                    <p className='text-gray-900 dark:text-gray-400 max-w-md mx-auto'>
-                        Manage and respond to all contact requests efficiently
+                    <p className='text-gray-600 dark:text-gray-400'>
+                        Manage user inquiries and support requests
                     </p>
                 </div>
 
@@ -182,11 +181,9 @@ const ContactList = () => {
                                                 Message
                                             </th>
                                             <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
-                                                Created At
+                                                Created / Updated
                                             </th>
-                                            <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
-                                                Updated At
-                                            </th>
+
                                             <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
                                                 Status
                                             </th>
@@ -250,19 +247,18 @@ const ContactList = () => {
                                                         </div>
                                                     </td>
                                                     <td className='px-6 py-6 whitespace-nowrap'>
-                                                        <div className='text-sm text-gray-500 dark:text-gray-400'>
+                                                        <div className='text-xs text-gray-500 dark:text-gray-400'>
                                                             {formatDate(
                                                                 contact.createdAt
                                                             )}
                                                         </div>
-                                                    </td>
-                                                    <td className='px-6 py-6 whitespace-nowrap'>
-                                                        <div className='text-sm text-gray-500 dark:text-gray-400'>
+                                                        <div className='text-xs text-gray-500 dark:text-gray-400'>
                                                             {formatDate(
                                                                 contact.updatedAt
                                                             )}
                                                         </div>
                                                     </td>
+
                                                     <td className='px-6 py-6 whitespace-nowrap'>
                                                         <span
                                                             className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium shadow-sm ${getStatusBadgeColor(

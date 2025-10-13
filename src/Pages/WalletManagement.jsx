@@ -6,7 +6,7 @@ import WalletService from '../service/WalletService';
 const WalletManagement = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('pending');
+    const [filter, setFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -156,7 +156,7 @@ const WalletManagement = () => {
     }
 
     return (
-        <div className='min-h-screen bg-gray-50 dark:bg-gray-900 p-6'>
+        <div className='min-h-screen p-6'>
             <div className='max-w-7xl mx-auto'>
                 {/* Header */}
                 <div className='mb-6'>
