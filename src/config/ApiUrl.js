@@ -16,37 +16,35 @@ const ApiUrl = {
         UPDATE_STATUS: (contactId) => `${BASE_URL}/contact/${contactId}/status`,
     },
 
-    ADMIN: {
-        // Quiz Management
-        PENDING_QUIZZES: `${BASE_URL}/admin/quizzes/pending`,
-        APPROVE_QUIZ: (quizId) => `${BASE_URL}/admin/quizzes/${quizId}/approve`,
-        REJECT_QUIZ: (quizId) => `${BASE_URL}/admin/quizzes/${quizId}/reject`,
-        ALL_QUIZZES: `${BASE_URL}/admin/quizzes`,
-        QUIZ_DETAILS: (quizId) => `${BASE_URL}/admin/quizzes/${quizId}/review`,
-
+    STATS: {
         // Analytics
-        DASHBOARD_STATS: `${BASE_URL}/admin/stats`,
-        USER_ANALYTICS: `${BASE_URL}/admin/analytics/users`,
-        QUIZ_ANALYTICS: `${BASE_URL}/admin/analytics/quizzes`,
-        REVENUE_ANALYTICS: `${BASE_URL}/admin/analytics/revenue`,
+        DASHBOARD_STATS: `${BASE_URL}/stats`,
+        QUIZ_ANALYTICS: `${BASE_URL}/stats/analytics/quiz`,
+    },
 
+    QUIZZES: {
+        // Quiz Management
+        PENDING_QUIZZES: `${BASE_URL}/quizzes/pending`,
+        APPROVE_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}/approve`,
+        REJECT_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}/reject`,
+        ALL_QUIZZES: `${BASE_URL}/quizzes`,
+        QUIZ_DETAILS: (quizId) => `${BASE_URL}/quizzes/${quizId}/review`,
+    },
+
+    WALLET: {
         // Transaction Management
-        TRANSACTIONS: `${BASE_URL}/admin/transactions`,
+        TRANSACTIONS: `${BASE_URL}/wallet/transactions`,
         APPROVE_WITHDRAWAL: (transactionId) =>
-            `${BASE_URL}/admin/transactions/${transactionId}/approve`,
+            `${BASE_URL}/wallet/withdrawal/${transactionId}/approve`,
         REJECT_WITHDRAWAL: (transactionId) =>
-            `${BASE_URL}/admin/transactions/${transactionId}/reject`,
-        PROCESS_REFUND: `${BASE_URL}/admin/transactions/refund`,
+            `${BASE_URL}/wallet/withdrawal/${transactionId}/reject`,
+        PROCESS_REFUND: `${BASE_URL}/wallet/transactions/refund`,
 
-        // User Management
-        USER_DETAILS: (userId) => `${BASE_URL}/admin/users/${userId}`,
-        SUSPEND_USER: (userId) => `${BASE_URL}/admin/users/${userId}/suspend`,
-        UNSUSPEND_USER: (userId) =>
-            `${BASE_URL}/admin/users/${userId}/unsuspend`,
-
-        // System Monitoring
-        SYSTEM_HEALTH: `${BASE_URL}/admin/system/health`,
-        ACTIVITY_LOGS: `${BASE_URL}/admin/system/logs`,
+        // Wallet Management
+        APPROVE_FUND_ADDITION: (transactionId) =>
+            `${BASE_URL}/wallet/fund-addition/${transactionId}/approve`,
+        REJECT_FUND_ADDITION: (transactionId) =>
+            `${BASE_URL}/wallet/fund-addition/${transactionId}/reject`,
     },
 };
 

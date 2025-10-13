@@ -2,14 +2,12 @@ import { useState } from 'react';
 import {
     Menu,
     X,
-    Brain,
     Home,
-    BookOpen,
-    Trophy,
     User,
     LogOut,
     MessageSquare,
     Shield,
+    Wallet,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { hasAuthToken, clearAuthToken } from '../utils/authToken';
@@ -22,9 +20,8 @@ function Header() {
     const navItems = [
         { href: '/', label: 'Dashboard', icon: Home },
         { href: '/quiz-management', label: 'Quiz Management', icon: Shield },
+        { href: '/wallet-management', label: 'Wallet', icon: Wallet },
         { href: '/userlist', label: 'Users', icon: User },
-        { href: '/contacts', label: 'Contacts', icon: MessageSquare },
-        { href: '/stats', label: 'Stats', icon: Trophy },
     ];
 
     const toggleMenu = () => {
