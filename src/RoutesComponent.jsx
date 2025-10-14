@@ -8,6 +8,7 @@ import Profile from './Pages/Profile';
 import ContactList from './Pages/ContactList';
 import QuizManagement from './Pages/QuizManagement';
 import WalletManagement from './Pages/WalletManagement';
+import QuizAnalytics from './Pages/QuizAnalytics';
 import NotFound from './Pages/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
 import PublicRoute from './Components/PublicRoute';
@@ -48,6 +49,7 @@ const RoutesComponent = () => {
                     path='/wallet-management'
                     element={<WalletManagement />}
                 />
+                <Route path='/quiz-analytics' element={<QuizAnalytics />} />
             </Route>
             <Route path='*' element={<NotFound />} />
         </Routes>

@@ -10,6 +10,7 @@ import {
     Users,
     MessageSquare,
     X,
+    BarChart3,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { hasAuthToken, clearAuthToken } from '../utils/authToken';
@@ -48,6 +49,7 @@ function Sidebar({
     const navItems = [
         { href: '/', label: 'Dashboard', icon: Home },
         { href: '/quiz-management', label: 'Quiz Management', icon: Shield },
+        { href: '/quiz-analytics', label: 'Quiz Analytics', icon: BarChart3 },
         { href: '/wallet-management', label: 'Wallet', icon: Wallet },
         { href: '/userlist', label: 'Users', icon: User },
         { href: '/dashboarduserlist', label: 'Admins', icon: Users },

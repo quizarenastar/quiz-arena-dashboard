@@ -17,6 +17,8 @@ const ApiUrl = {
     },
 
     STATS: {
+        // Dashboard counts for stats cards
+        DASHBOARD_COUNTS: `${BASE_URL}/stats/counts`,
         // Analytics
         DASHBOARD_STATS: `${BASE_URL}/stats`,
         QUIZ_ANALYTICS: `${BASE_URL}/stats/analytics/quiz`,
