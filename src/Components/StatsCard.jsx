@@ -1,23 +1,47 @@
-import { Users, UserPlus, Book } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, UserPlus, Book, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import StatsService from '../service/StatsService';
 
 function StatsCard() {
     const navigate = useNavigate();
+    const [stats, setStats] = useState({
+        quizzes: 0,
+        contacts: 0,
+        dashboardUsers: 0,
+        users: 0,
+        walletTransactions: 0,
+    });
+    const [loading, setLoading] = useState(true);
 
-    // Mock data (replace with real values when API is ready)
-    const mockStats = {
-        quizzes: 120,
-        contacts: 325,
-        dashboardUserList: 78,
-        userList: 45,
-        walletTransaction: 50,
-    };
+    // Fetch stats from API
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const response = await StatsService.getDashboardCounts();
+
+                if (response.success) {
+                    setStats(response.data);
+                } else {
+                    toast.error('Failed to load statistics');
+                }
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+                toast.error('Failed to load statistics');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
+    }, []);
 
     const cards = [
         {
             key: 'quizzes',
             title: 'Total Quizzes',
-            value: mockStats.quizzes,
+            value: stats.quizzes,
             icon: (
                 <div className='rounded-xl bg-yellow-100/70 dark:bg-yellow-900/30 p-3'>
                     <Users className='w-7 h-7 text-yellow-600 dark:text-yellow-400' />
@@ -30,7 +54,7 @@ function StatsCard() {
         {
             key: 'walletTransactions',
             title: 'Wallet Transactions',
-            value: mockStats.walletTransaction,
+            value: stats.walletTransactions,
             icon: (
                 <div className='rounded-xl bg-emerald-100/70 dark:bg-emerald-900/30 p-3'>
                     <UserPlus className='w-7 h-7 text-emerald-600 dark:text-emerald-400' />
@@ -44,7 +68,7 @@ function StatsCard() {
         {
             key: 'contacts',
             title: 'Total Contacts',
-            value: mockStats.contacts, // ✅ FIXED
+            value: stats.contacts,
             icon: (
                 <div className='rounded-xl bg-indigo-100/70 dark:bg-indigo-900/30 p-3'>
                     <Book className='w-7 h-7 text-indigo-600 dark:text-indigo-400' />
@@ -57,7 +81,7 @@ function StatsCard() {
         {
             key: 'dashboardUsers',
             title: 'Dashboard Users',
-            value: mockStats.dashboardUserList,
+            value: stats.dashboardUsers,
             icon: (
                 <div className='rounded-xl bg-sky-100/70 dark:bg-sky-900/30 p-3'>
                     <Users className='w-7 h-7 text-sky-600 dark:text-sky-400' />
@@ -70,7 +94,7 @@ function StatsCard() {
         {
             key: 'users',
             title: 'Users',
-            value: mockStats.userList,
+            value: stats.users,
             icon: (
                 <div className='rounded-xl bg-rose-100/70 dark:bg-rose-900/30 p-3'>
                     <Users className='w-7 h-7 text-rose-600 dark:text-rose-400' />
@@ -81,6 +105,18 @@ function StatsCard() {
                 'from-rose-50 to-rose-100 dark:from-slate-800 dark:to-slate-800/60',
         },
     ];
+
+    // Show loading state
+    if (loading) {
+        return (
+            <div className='flex items-center justify-center h-64'>
+                <Loader2 className='w-8 h-8 animate-spin text-blue-600' />
+                <span className='ml-3 text-gray-600 dark:text-gray-400'>
+                    Loading statistics...
+                </span>
+            </div>
+        );
+    }
 
     return (
         <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 p-4'>

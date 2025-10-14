@@ -32,14 +32,20 @@ class StatsService {
         }
     }
 
-    // Analytics
-    async getDashboardStats() {
-        return this.makeRequest(ApiUrl.ADMIN.DASHBOARD_STATS);
+    // Get dashboard counts for stats cards
+    async getDashboardCounts() {
+        return this.makeRequest(ApiUrl.STATS.DASHBOARD_COUNTS);
     }
 
-    async getUserAnalytics(period = '30d') {
+    // Get comprehensive dashboard statistics
+    async getDashboardStats() {
+        return this.makeRequest(ApiUrl.STATS.DASHBOARD_STATS);
+    }
+
+    // Get quiz analytics with optional period filter
+    async getQuizAnalytics(period = '30') {
         return this.makeRequest(
-            `${ApiUrl.ADMIN.USER_ANALYTICS}?period=${period}`
+            `${ApiUrl.STATS.QUIZ_ANALYTICS}?period=${period}`
         );
     }
 }

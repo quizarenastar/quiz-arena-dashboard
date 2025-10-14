@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import QuizService from '../service/QuizService';
+import { formatDate } from '../utils/format';
 
 const QuizManagement = () => {
     const [quizzes, setQuizzes] = useState([]);
@@ -22,10 +23,27 @@ const QuizManagement = () => {
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
     const [actionLoading, setActionLoading] = useState(false);
+    const [viewMode, setViewMode] = useState('table');
 
     useEffect(() => {
         fetchQuizzes();
     }, [filter]);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 768px)');
+        const handleResize = (e) => {
+            setViewMode(e.matches ? 'table' : 'grid');
+        };
+
+        // Set initial view mode
+        handleResize(mediaQuery);
+
+        // Add listener for window resize
+        mediaQuery.addEventListener('change', handleResize);
+
+        // Cleanup
+        return () => mediaQuery.removeEventListener('change', handleResize);
+    }, []);
 
     const fetchQuizzes = async () => {
         try {
@@ -115,7 +133,7 @@ const QuizManagement = () => {
 
     if (loading) {
         return (
-            <div className='min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center'>
+            <div className='min-h-screen  flex items-center justify-center'>
                 <div className='text-center'>
                     <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto'></div>
                     <p className='mt-4 text-gray-600 dark:text-gray-400'>
@@ -140,26 +158,76 @@ const QuizManagement = () => {
                 </div>
 
                 {/* Filters and Search */}
-                <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6'>
-                    <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+                <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 sm:p-6 mb-6'>
+                    <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
                         {/* Status Filter */}
-                        <div className='flex space-x-2'>
-                            {['pending', 'approved', 'rejected', 'all'].map(
-                                (status) => (
-                                    <button
-                                        key={status}
-                                        onClick={() => setFilter(status)}
-                                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                                            filter === status
-                                                ? 'bg-yellow-600 text-white'
-                                                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                                        }`}
+                        <div className='flex items-center space-x-4'>
+                            <div className='flex space-x-2'>
+                                {['pending', 'approved', 'rejected', 'all'].map(
+                                    (status) => (
+                                        <button
+                                            key={status}
+                                            onClick={() => setFilter(status)}
+                                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                                filter === status
+                                                    ? 'bg-yellow-600 text-white'
+                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                            }`}
+                                        >
+                                            {status.charAt(0).toUpperCase() +
+                                                status.slice(1)}
+                                        </button>
+                                    )
+                                )}
+                            </div>
+
+                            {/* View Toggle */}
+                            <div className='flex space-x-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg'>
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`p-2 rounded transition-colors ${
+                                        viewMode === 'grid'
+                                            ? 'bg-white dark:bg-gray-600 text-yellow-600 shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                    }`}
+                                >
+                                    <svg
+                                        className='w-5 h-5'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        viewBox='0 0 24 24'
                                     >
-                                        {status.charAt(0).toUpperCase() +
-                                            status.slice(1)}
-                                    </button>
-                                )
-                            )}
+                                        <path
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            strokeWidth={2}
+                                            d='M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'
+                                        />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('table')}
+                                    className={`p-2 rounded transition-colors ${
+                                        viewMode === 'table'
+                                            ? 'bg-white dark:bg-gray-600 text-yellow-600 shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                    }`}
+                                >
+                                    <svg
+                                        className='w-5 h-5'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        viewBox='0 0 24 24'
+                                    >
+                                        <path
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            strokeWidth={2}
+                                            d='M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z'
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         {/* Search */}
@@ -187,24 +255,161 @@ const QuizManagement = () => {
                                 No quizzes found for the selected filter.
                             </p>
                         </div>
+                    ) : viewMode === 'grid' ? (
+                        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6'>
+                            {filteredQuizzes.map((quiz) => (
+                                <div
+                                    key={quiz._id}
+                                    className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow'
+                                >
+                                    <div className='p-4'>
+                                        <div className='flex justify-between items-start mb-4'>
+                                            <h3 className='text-lg font-medium text-gray-900 dark:text-white line-clamp-2'>
+                                                {quiz.title}
+                                            </h3>
+                                            <span
+                                                className={`ml-2 px-2 py-1 text-xs font-medium rounded-full shrink-0 ${getStatusColor(
+                                                    quiz.status
+                                                )}`}
+                                            >
+                                                {quiz.status
+                                                    .charAt(0)
+                                                    .toUpperCase() +
+                                                    quiz.status.slice(1)}
+                                            </span>
+                                        </div>
+
+                                        <p className='text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4'>
+                                            {quiz.description}
+                                        </p>
+
+                                        <div className='flex flex-wrap gap-2 mb-4'>
+                                            <span className='px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full'>
+                                                {quiz.category}
+                                            </span>
+                                            <span
+                                                className={`px-2 py-1 text-xs rounded-full ${
+                                                    quiz.difficulty ===
+                                                    'beginner'
+                                                        ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                                                        : quiz.difficulty ===
+                                                          'intermediate'
+                                                        ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
+                                                        : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                                                }`}
+                                            >
+                                                {quiz.difficulty}
+                                            </span>
+                                            {quiz.isPaid && (
+                                                <span className='flex items-center px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full'>
+                                                    <DollarSign
+                                                        size={12}
+                                                        className='mr-1'
+                                                    />
+                                                    ₹{quiz.price}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className='border-t border-gray-200 dark:border-gray-700 -mx-4 px-4 pt-4'>
+                                            <div className='flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4'>
+                                                <div className='flex items-center'>
+                                                    <Users
+                                                        size={14}
+                                                        className='mr-1'
+                                                    />
+                                                    {quiz.questions?.length ||
+                                                        0}{' '}
+                                                    Q
+                                                </div>
+                                                <div className='flex items-center'>
+                                                    <Clock
+                                                        size={14}
+                                                        className='mr-1'
+                                                    />
+                                                    {quiz.timeLimit}m
+                                                </div>
+                                                <div className='flex items-center'>
+                                                    <Eye
+                                                        size={14}
+                                                        className='mr-1'
+                                                    />
+                                                    {quiz.attemptCount || 0}
+                                                </div>
+                                            </div>
+
+                                            <div className='flex gap-2 justify-end'>
+                                                <button
+                                                    onClick={() =>
+                                                        openQuizModal(quiz)
+                                                    }
+                                                    className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md inline-flex items-center'
+                                                >
+                                                    <Eye
+                                                        size={12}
+                                                        className='mr-1'
+                                                    />
+                                                    Review
+                                                </button>
+                                                {quiz.status === 'pending' && (
+                                                    <>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleApproveQuiz(
+                                                                    quiz._id
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                actionLoading
+                                                            }
+                                                            className='px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-md inline-flex items-center'
+                                                        >
+                                                            <CheckCircle
+                                                                size={12}
+                                                                className='mr-1'
+                                                            />
+                                                            Approve
+                                                        </button>
+                                                        <button
+                                                            onClick={() =>
+                                                                openQuizModal(
+                                                                    quiz
+                                                                )
+                                                            }
+                                                            className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md inline-flex items-center'
+                                                        >
+                                                            <XCircle
+                                                                size={12}
+                                                                className='mr-1'
+                                                            />
+                                                            Reject
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     ) : (
                         <div className='overflow-x-auto'>
                             <table className='w-full'>
                                 <thead className='bg-gray-50 dark:bg-gray-700'>
                                     <tr>
-                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider'>
+                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
                                             Quiz Details
                                         </th>
-                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider'>
+                                        <th className='hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
                                             Creator
                                         </th>
-                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider'>
+                                        <th className='hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
                                             Stats
                                         </th>
-                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider'>
+                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
                                             Status
                                         </th>
-                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider'>
+                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
                                             Actions
                                         </th>
                                     </tr>
@@ -251,7 +456,7 @@ const QuizManagement = () => {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className='px-6 py-4'>
+                                            <td className='hidden md:table-cell px-6 py-4'>
                                                 <div>
                                                     <p className='text-sm font-medium text-gray-900 dark:text-white'>
                                                         {quiz.creator?.name ||
@@ -263,7 +468,7 @@ const QuizManagement = () => {
                                                     </p>
                                                 </div>
                                             </td>
-                                            <td className='px-6 py-4'>
+                                            <td className='hidden lg:table-cell px-6 py-4'>
                                                 <div className='flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400'>
                                                     <div className='flex items-center'>
                                                         <Users
@@ -305,7 +510,7 @@ const QuizManagement = () => {
                                                 {quiz.status === 'pending' && (
                                                     <div className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
                                                         Submitted{' '}
-                                                        {QuizService.formatDate(
+                                                        {formatDate(
                                                             quiz.createdAt
                                                         )}
                                                     </div>

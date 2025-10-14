@@ -10,9 +10,26 @@ const UserList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'active', 'blocked'
     const [balanceRange, setBalanceRange] = useState({ min: '', max: '' });
+    const [viewMode, setViewMode] = useState('table');
 
     useEffect(() => {
         fetchUsers();
+    }, []);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 768px)');
+        const handleResize = (e) => {
+            setViewMode(e.matches ? 'table' : 'grid');
+        };
+
+        // Set initial view mode
+        handleResize(mediaQuery);
+
+        // Add listener for window resize
+        mediaQuery.addEventListener('change', handleResize);
+
+        // Cleanup
+        return () => mediaQuery.removeEventListener('change', handleResize);
     }, []);
 
     // Filter users based on all criteria
@@ -70,7 +87,6 @@ const UserList = () => {
         const filteredUsers = filterUsers(userList);
         return (
             <>
-                {/* Desktop Table */}
                 {filteredUsers.length === 0 ? (
                     <div className='text-center py-16'>
                         <div className='inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-full mb-6'>
@@ -95,8 +111,97 @@ const UserList = () => {
                             Try adjusting your filters or search terms
                         </p>
                     </div>
+                ) : viewMode === 'grid' ? (
+                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+                        {filteredUsers.map((user, index) => (
+                            <div
+                                key={user._id}
+                                className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden'
+                            >
+                                <div className='p-6'>
+                                    {/* User Header */}
+                                    <div className='flex items-center space-x-4 mb-4'>
+                                        <div
+                                            className={`h-16 w-16 rounded-xl shadow-sm flex items-center justify-center text-white font-semibold text-2xl bg-gradient-to-br ${
+                                                index % 4 === 0
+                                                    ? 'from-blue-500 to-cyan-500'
+                                                    : index % 4 === 1
+                                                    ? 'from-purple-500 to-pink-500'
+                                                    : index % 4 === 2
+                                                    ? 'from-green-500 to-emerald-500'
+                                                    : 'from-orange-500 to-red-500'
+                                            }`}
+                                        >
+                                            {user.username
+                                                ?.charAt(0)
+                                                ?.toUpperCase() || 'U'}
+                                        </div>
+                                        <div className='flex-1 min-w-0'>
+                                            <h3 className='text-lg font-semibold text-gray-900 dark:text-white truncate'>
+                                                {user.username || 'No Username'}
+                                            </h3>
+                                            <p className='text-sm text-gray-500 dark:text-gray-400 truncate'>
+                                                {user.email || 'No Email'}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Status Badge */}
+                                    <div className='mb-4'>
+                                        <span
+                                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
+                                                !user.blocked
+                                                    ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white'
+                                                    : 'bg-gradient-to-r from-red-400 to-pink-500 text-white'
+                                            }`}
+                                        >
+                                            <span className='w-2 h-2 mr-2 rounded-full bg-white/80'></span>
+                                            {!user.blocked
+                                                ? 'Active'
+                                                : 'Blocked'}
+                                        </span>
+                                    </div>
+
+                                    {/* Balance Info */}
+                                    <div className='grid grid-cols-2 gap-4 text-sm'>
+                                        <div>
+                                            <p className='text-gray-500 dark:text-gray-400'>
+                                                Current Balance
+                                            </p>
+                                            <p className='text-lg font-semibold text-gray-900 dark:text-white'>
+                                                ₹{user.currentBalance || 0}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className='text-gray-500 dark:text-gray-400'>
+                                                Total Earn
+                                            </p>
+                                            <p className='text-lg font-semibold text-green-600 dark:text-green-400'>
+                                                ₹{user.totalEarn || 0}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className='mt-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
+                                        <div className='flex items-center justify-between'>
+                                            <div className='text-sm text-gray-500 dark:text-gray-400'>
+                                                Joined:{' '}
+                                                {new Date(
+                                                    user.createdAt
+                                                ).toLocaleDateString()}
+                                            </div>
+                                            <div className='text-sm text-gray-500 dark:text-gray-400'>
+                                                Redeemed: ₹
+                                                {user.totalRedeem || 0}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 ) : (
-                    <div className='hidden md:block bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 shadow-sm rounded-3xl border border-white/20 dark:border-gray-700/50 overflow-hidden'>
+                    <div className='bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 shadow-sm rounded-3xl border border-white/20 dark:border-gray-700/50 overflow-hidden'>
                         <div className='bg-gradient-to-r from-indigo-500/5 to-purple-500/5 px-6 py-4 border-b border-gray-200/50 dark:border-gray-700/50'>
                             <h2 className='text-lg font-semibold text-gray-800 dark:text-white'>
                                 Users Overview
@@ -304,6 +409,56 @@ const UserList = () => {
                                         })
                                     }
                                 />
+                            </div>
+                        </div>
+
+                        {/* View Toggle */}
+                        <div className='col-span-1 flex justify-end'>
+                            <div className='flex space-x-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg'>
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`p-2 rounded transition-colors ${
+                                        viewMode === 'grid'
+                                            ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                    }`}
+                                >
+                                    <svg
+                                        className='w-5 h-5'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        viewBox='0 0 24 24'
+                                    >
+                                        <path
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            strokeWidth={2}
+                                            d='M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'
+                                        />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('table')}
+                                    className={`p-2 rounded transition-colors ${
+                                        viewMode === 'table'
+                                            ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm'
+                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                    }`}
+                                >
+                                    <svg
+                                        className='w-5 h-5'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        viewBox='0 0 24 24'
+                                    >
+                                        <path
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            strokeWidth={2}
+                                            d='M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z'
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
