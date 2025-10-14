@@ -328,7 +328,7 @@ const UserList = () => {
                 </div>
                 {/* Search and Filters */}
                 <div className='mb-8'>
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4'>
                         {/* Search Bar with Button */}
                         <div className='col-span-1 md:col-span-2 relative'>
                             <div className='flex'>
@@ -413,7 +413,7 @@ const UserList = () => {
                         </div>
 
                         {/* View Toggle */}
-                        <div className='col-span-1 flex justify-end'>
+                        <div className='col-span-1 flex justify-start'>
                             <div className='flex space-x-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg'>
                                 <button
                                     onClick={() => setViewMode('grid')}
