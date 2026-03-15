@@ -62,6 +62,12 @@ class QuizService {
     async getQuizDetails(quizId) {
         return this.makeRequest(ApiUrl.QUIZZES.QUIZ_DETAILS(quizId));
     }
+
+    async deleteQuiz(quizId) {
+        return this.makeRequest(ApiUrl.QUIZZES.DELETE_QUIZ(quizId), {
+            method: 'DELETE',
+        });
+    }
 }
 
 export default new QuizService();

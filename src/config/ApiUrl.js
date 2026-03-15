@@ -29,6 +29,7 @@ const ApiUrl = {
         PENDING_QUIZZES: `${BASE_URL}/quizzes/pending`,
         APPROVE_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}/approve`,
         REJECT_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}/reject`,
+        DELETE_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}`,
         ALL_QUIZZES: `${BASE_URL}/quizzes`,
         QUIZ_DETAILS: (quizId) => `${BASE_URL}/quizzes/${quizId}/review`,
     },
