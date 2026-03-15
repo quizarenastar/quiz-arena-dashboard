@@ -8,6 +8,7 @@ import {
     DollarSign,
     AlertTriangle,
     Search,
+    Trash2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import QuizService from '../service/QuizService';
@@ -24,6 +25,8 @@ const QuizManagement = () => {
     const [rejectionReason, setRejectionReason] = useState('');
     const [actionLoading, setActionLoading] = useState(false);
     const [viewMode, setViewMode] = useState('table');
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [quizToDelete, setQuizToDelete] = useState(null);
 
     useEffect(() => {
         fetchQuizzes();
@@ -107,6 +110,32 @@ const QuizManagement = () => {
         }
     };
 
+    const confirmDeleteQuiz = (quiz, e) => {
+        e.stopPropagation();
+        setQuizToDelete(quiz);
+        setShowDeleteConfirm(true);
+    };
+
+    const handleDeleteQuiz = async () => {
+        if (!quizToDelete) return;
+        setActionLoading(true);
+        try {
+            await QuizService.deleteQuiz(quizToDelete._id);
+            toast.success('Quiz deleted successfully!');
+            setShowDeleteConfirm(false);
+            setQuizToDelete(null);
+            if (showQuizModal && selectedQuiz?._id === quizToDelete._id) {
+                setShowQuizModal(false);
+                setSelectedQuiz(null);
+            }
+            fetchQuizzes();
+        } catch (error) {
+            toast.error(error.message || 'Failed to delete quiz');
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     const getStatusColor = (status) => {
         const colors = {
             pending: 'bg-yellow-100 text-yellow-800',
@@ -145,6 +174,7 @@ const QuizManagement = () => {
     }
 
     return (
+        <>
         <div className='min-h-screen p-6'>
             <div className='max-w-7xl mx-auto'>
                 {/* Header */}
@@ -338,54 +368,41 @@ const QuizManagement = () => {
                                                 </div>
                                             </div>
 
-                                            <div className='flex gap-2 justify-end'>
+                                            <div className='flex gap-2 justify-end flex-wrap'>
                                                 <button
-                                                    onClick={() =>
-                                                        openQuizModal(quiz)
-                                                    }
+                                                    onClick={() => openQuizModal(quiz)}
                                                     className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md inline-flex items-center'
                                                 >
-                                                    <Eye
-                                                        size={12}
-                                                        className='mr-1'
-                                                    />
+                                                    <Eye size={12} className='mr-1' />
                                                     Review
                                                 </button>
                                                 {quiz.status === 'pending' && (
                                                     <>
                                                         <button
-                                                            onClick={() =>
-                                                                handleApproveQuiz(
-                                                                    quiz._id
-                                                                )
-                                                            }
-                                                            disabled={
-                                                                actionLoading
-                                                            }
+                                                            onClick={() => handleApproveQuiz(quiz._id)}
+                                                            disabled={actionLoading}
                                                             className='px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-md inline-flex items-center'
                                                         >
-                                                            <CheckCircle
-                                                                size={12}
-                                                                className='mr-1'
-                                                            />
+                                                            <CheckCircle size={12} className='mr-1' />
                                                             Approve
                                                         </button>
                                                         <button
-                                                            onClick={() =>
-                                                                openQuizModal(
-                                                                    quiz
-                                                                )
-                                                            }
+                                                            onClick={() => openQuizModal(quiz)}
                                                             className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md inline-flex items-center'
                                                         >
-                                                            <XCircle
-                                                                size={12}
-                                                                className='mr-1'
-                                                            />
+                                                            <XCircle size={12} className='mr-1' />
                                                             Reject
                                                         </button>
                                                     </>
                                                 )}
+                                                <button
+                                                    onClick={(e) => confirmDeleteQuiz(quiz, e)}
+                                                    className='px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md inline-flex items-center'
+                                                    title='Delete quiz permanently'
+                                                >
+                                                    <Trash2 size={12} className='mr-1' />
+                                                    Delete
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -517,57 +534,44 @@ const QuizManagement = () => {
                                                 )}
                                             </td>
                                             <td className='px-6 py-4'>
-                                                <div className='flex space-x-2'>
+                                                <div className='flex flex-wrap gap-2'>
                                                     <button
-                                                        onClick={() =>
-                                                            openQuizModal(quiz)
-                                                        }
+                                                        onClick={() => openQuizModal(quiz)}
                                                         className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md'
                                                     >
-                                                        <Eye
-                                                            size={12}
-                                                            className='mr-1 inline'
-                                                        />
+                                                        <Eye size={12} className='mr-1 inline' />
                                                         Review
                                                     </button>
 
-                                                    {quiz.status ===
-                                                        'pending' && (
+                                                    {quiz.status === 'pending' && (
                                                         <>
                                                             <button
-                                                                onClick={() =>
-                                                                    handleApproveQuiz(
-                                                                        quiz._id
-                                                                    )
-                                                                }
-                                                                disabled={
-                                                                    actionLoading
-                                                                }
+                                                                onClick={() => handleApproveQuiz(quiz._id)}
+                                                                disabled={actionLoading}
                                                                 className='px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-md'
                                                             >
-                                                                <CheckCircle
-                                                                    size={12}
-                                                                    className='mr-1 inline'
-                                                                />
+                                                                <CheckCircle size={12} className='mr-1 inline' />
                                                                 Approve
                                                             </button>
 
                                                             <button
-                                                                onClick={() =>
-                                                                    openQuizModal(
-                                                                        quiz
-                                                                    )
-                                                                }
+                                                                onClick={() => openQuizModal(quiz)}
                                                                 className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md'
                                                             >
-                                                                <XCircle
-                                                                    size={12}
-                                                                    className='mr-1 inline'
-                                                                />
+                                                                <XCircle size={12} className='mr-1 inline' />
                                                                 Reject
                                                             </button>
                                                         </>
                                                     )}
+
+                                                    <button
+                                                        onClick={(e) => confirmDeleteQuiz(quiz, e)}
+                                                        className='px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md'
+                                                        title='Delete quiz permanently'
+                                                    >
+                                                        <Trash2 size={12} className='mr-1 inline' />
+                                                        Delete
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -711,86 +715,80 @@ const QuizManagement = () => {
                                     </p>
                                 </div>
 
-                                {/* Questions Preview */}
+                                {/* Questions — all shown */}
                                 <div className='mb-6'>
                                     <h3 className='font-semibold text-gray-900 dark:text-white mb-2'>
-                                        Questions Preview
+                                        Questions ({selectedQuiz.questions?.length || 0})
                                     </h3>
-                                    <div className='space-y-4 max-h-64 overflow-y-auto'>
-                                        {selectedQuiz.questions
-                                            ?.slice(0, 3)
-                                            .map((question, index) => (
-                                                <div
-                                                    key={index}
-                                                    className='border border-gray-200 dark:border-gray-600 rounded-lg p-4'
-                                                >
-                                                    <p className='font-medium text-gray-900 dark:text-white mb-2'>
-                                                        {index + 1}.{' '}
-                                                        {question.text}
-                                                    </p>
-                                                    <div className='grid grid-cols-2 gap-2 text-sm'>
-                                                        {question.options.map(
-                                                            (
-                                                                option,
-                                                                optIndex
-                                                            ) => (
-                                                                <div
-                                                                    key={
-                                                                        optIndex
-                                                                    }
-                                                                    className={`p-2 rounded ${
-                                                                        optIndex ===
-                                                                        question.correctAnswer
-                                                                            ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                                                                            : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                                                                    }`}
-                                                                >
-                                                                    {option}
-                                                                </div>
-                                                            )
-                                                        )}
-                                                    </div>
+                                    <div className='space-y-3 max-h-[50vh] overflow-y-auto pr-1'>
+                                        {selectedQuiz.questions?.map((question, index) => (
+                                            <div
+                                                key={index}
+                                                className='border border-gray-200 dark:border-gray-600 rounded-lg p-4'
+                                            >
+                                                <p className='font-medium text-gray-900 dark:text-white mb-2 text-sm'>
+                                                    <span className='inline-flex items-center justify-center w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-bold mr-2'>
+                                                        {index + 1}
+                                                    </span>
+                                                    {question.question || question.text}
+                                                </p>
+                                                <div className='grid grid-cols-2 gap-2 text-sm'>
+                                                    {question.options?.map((option, optIndex) => (
+                                                        <div
+                                                            key={optIndex}
+                                                            className={`p-2 rounded flex items-start gap-1.5 ${
+                                                                optIndex === question.correctAnswer
+                                                                    ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 font-medium'
+                                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                                            }`}
+                                                        >
+                                                            <span className='font-bold flex-shrink-0'>{String.fromCharCode(65+optIndex)}.</span>
+                                                            {option}
+                                                            {optIndex === question.correctAnswer && (
+                                                                <CheckCircle size={12} className='ml-auto flex-shrink-0 mt-0.5' />
+                                                            )}
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
-                                        {selectedQuiz.questions?.length > 3 && (
-                                            <p className='text-sm text-gray-500 dark:text-gray-400 text-center'>
-                                                ... and{' '}
-                                                {selectedQuiz.questions.length -
-                                                    3}{' '}
-                                                more questions
-                                            </p>
-                                        )}
+                                                {question.explanation && (
+                                                    <p className='mt-2 text-xs text-gray-500 dark:text-gray-400 italic border-l-2 border-indigo-300 pl-2'>
+                                                        {question.explanation}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
 
                                 {/* Action Buttons */}
-                                {selectedQuiz.status === 'pending' && (
-                                    <div className='flex space-x-4'>
-                                        <button
-                                            onClick={() =>
-                                                handleApproveQuiz(
-                                                    selectedQuiz._id
-                                                )
-                                            }
-                                            disabled={actionLoading}
-                                            className='flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg font-medium'
-                                        >
-                                            {actionLoading
-                                                ? 'Processing...'
-                                                : 'Approve Quiz'}
-                                        </button>
-
-                                        <button
-                                            onClick={() => {
-                                                setShowRejectModal(true);
-                                            }}
-                                            disabled={actionLoading}
-                                            className='flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium'
-                                        >
-                                            Reject Quiz
-                                        </button>
-                                    </div>
-                                )}
+                                <div className='flex flex-wrap gap-3 pt-2 border-t border-gray-200 dark:border-gray-700'>
+                                    {selectedQuiz.status === 'pending' && (
+                                        <>
+                                            <button
+                                                onClick={() => handleApproveQuiz(selectedQuiz._id)}
+                                                disabled={actionLoading}
+                                                className='flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg font-medium'
+                                            >
+                                                {actionLoading ? 'Processing...' : 'Approve Quiz'}
+                                            </button>
+                                            <button
+                                                onClick={() => setShowRejectModal(true)}
+                                                disabled={actionLoading}
+                                                className='flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium'
+                                            >
+                                                Reject Quiz
+                                            </button>
+                                        </>
+                                    )}
+                                    <button
+                                        onClick={(e) => { setShowQuizModal(false); confirmDeleteQuiz(selectedQuiz, e); }}
+                                        disabled={actionLoading}
+                                        className='px-4 py-2 bg-gray-700 hover:bg-gray-800 disabled:bg-gray-400 text-white rounded-lg font-medium flex items-center gap-2'
+                                    >
+                                        <Trash2 size={14} />
+                                        Delete Quiz
+                                    </button>
+                                </div>
 
                                 {selectedQuiz.status === 'rejected' &&
                                     selectedQuiz.rejectionReason && (
@@ -907,6 +905,50 @@ const QuizManagement = () => {
                 )}
             </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && quizToDelete && (
+            <div className='fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[60] p-4'>
+                <div className='bg-white dark:bg-gray-800 rounded-lg max-w-sm w-full p-6 shadow-xl'>
+                    <div className='flex items-center gap-3 mb-4'>
+                        <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-full'>
+                            <Trash2 size={20} className='text-red-600 dark:text-red-400' />
+                        </div>
+                        <h3 className='text-lg font-bold text-gray-900 dark:text-white'>
+                            Delete Quiz
+                        </h3>
+                    </div>
+                    <p className='text-gray-600 dark:text-gray-400 mb-1'>
+                        Are you sure you want to permanently delete:
+                    </p>
+                    <p className='font-semibold text-gray-900 dark:text-white mb-5'>
+                        "{quizToDelete.title}"
+                    </p>
+                    <p className='text-xs text-red-500 mb-5'>
+                        This action cannot be undone. All questions and attempts will be removed.
+                    </p>
+                    <div className='flex gap-3'>
+                        <button
+                            onClick={() => { setShowDeleteConfirm(false); setQuizToDelete(null); }}
+                            disabled={actionLoading}
+                            className='flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium'
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleDeleteQuiz}
+                            disabled={actionLoading}
+                            className='flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium flex items-center justify-center gap-2'
+                        >
+                            <Trash2 size={14} />
+                            {actionLoading ? 'Deleting...' : 'Yes, Delete'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+
+        </>
     );
 };
 
