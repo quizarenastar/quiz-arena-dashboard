@@ -49,6 +49,13 @@ const ApiUrl = {
         REJECT_FUND_ADDITION: (transactionId) =>
             `${BASE_URL}/wallet/fund-addition/${transactionId}/reject`,
     },
+
+    WAR_ROOMS: {
+        STATS: `${BASE_URL}/war-rooms/stats`,
+        ALL: `${BASE_URL}/war-rooms`,
+        DETAILS: (roomId) => `${BASE_URL}/war-rooms/${roomId}`,
+        DELETE: (roomId) => `${BASE_URL}/war-rooms/${roomId}`,
+    },
 };
 
 export default ApiUrl;
