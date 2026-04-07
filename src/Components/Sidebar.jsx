@@ -11,6 +11,7 @@ import {
     MessageSquare,
     X,
     BarChart3,
+    Swords,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { hasAuthToken, clearAuthToken } from '../utils/authToken';
@@ -50,6 +51,7 @@ function Sidebar({
         { href: '/', label: 'Dashboard', icon: Home },
         { href: '/quiz-management', label: 'Quiz Management', icon: Shield },
         { href: '/quiz-analytics', label: 'Quiz Analytics', icon: BarChart3 },
+        { href: '/war-rooms', label: 'War Rooms', icon: Swords },
         { href: '/wallet-management', label: 'Wallet', icon: Wallet },
         { href: '/userlist', label: 'Users', icon: User },
         { href: '/dashboarduserlist', label: 'Admins', icon: Users },
