@@ -41,6 +41,25 @@ class WalletService {
         return this.makeRequest(url);
     }
 
+    async approveFundAddition(transactionId) {
+        return this.makeRequest(
+            ApiUrl.WALLET.APPROVE_FUND_ADDITION(transactionId),
+            {
+                method: 'POST',
+            }
+        );
+    }
+
+    async rejectFundAddition(transactionId, reason) {
+        return this.makeRequest(
+            ApiUrl.WALLET.REJECT_FUND_ADDITION(transactionId),
+            {
+                method: 'POST',
+                body: JSON.stringify({ reason }),
+            }
+        );
+    }
+
     async approveWithdrawal(transactionId) {
         return this.makeRequest(
             ApiUrl.WALLET.APPROVE_WITHDRAWAL(transactionId),
