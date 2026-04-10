@@ -9,6 +9,12 @@ import {
     Clock,
     Grid as GridIcon,
     List as ListIcon,
+    Bug,
+    Lightbulb,
+    MessageCircle,
+    HelpCircle,
+    ExternalLink,
+    Phone,
 } from 'lucide-react';
 
 const ContactList = () => {
@@ -52,7 +58,7 @@ const ContactList = () => {
             } else {
                 setError(response.message);
                 toast.error(
-                    response.message || 'Failed to load contact requests'
+                    response.message || 'Failed to load contact requests',
                 );
             }
         } catch (err) {
@@ -68,15 +74,15 @@ const ContactList = () => {
         try {
             const response = await ContactService.updateContactStatus(
                 contactId,
-                newStatus
+                newStatus,
             );
             if (response.success) {
                 setContacts(
                     contacts.map((contact) =>
                         contact._id === contactId
                             ? { ...contact, status: newStatus }
-                            : contact
-                    )
+                            : contact,
+                    ),
                 );
                 toast.success('Status updated successfully');
             } else {
@@ -124,11 +130,43 @@ const ContactList = () => {
         });
     };
 
+    const getCategoryConfig = (category) => {
+        switch (category) {
+            case 'bug':
+                return {
+                    label: 'Bug',
+                    icon: Bug,
+                    color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+                };
+            case 'feature':
+                return {
+                    label: 'Feature',
+                    icon: Lightbulb,
+                    color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+                };
+            case 'feedback':
+                return {
+                    label: 'Feedback',
+                    icon: MessageCircle,
+                    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+                };
+            default:
+                return {
+                    label: 'Other',
+                    icon: HelpCircle,
+                    color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+                };
+        }
+    };
+
     const filteredContacts = contacts.filter(
         (contact) =>
             contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            contact.subject.toLowerCase().includes(searchTerm.toLowerCase())
+            contact.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (contact.category || '')
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()),
     );
 
     const renderGrid = (contacts) => (
@@ -145,10 +183,10 @@ const ContactList = () => {
                                     index % 4 === 0
                                         ? 'from-blue-500 to-cyan-500'
                                         : index % 4 === 1
-                                        ? 'from-purple-500 to-pink-500'
-                                        : index % 4 === 2
-                                        ? 'from-green-500 to-emerald-500'
-                                        : 'from-orange-500 to-red-500'
+                                          ? 'from-purple-500 to-pink-500'
+                                          : index % 4 === 2
+                                            ? 'from-green-500 to-emerald-500'
+                                            : 'from-orange-500 to-red-500'
                                 }`}
                             >
                                 {contact.name.charAt(0).toUpperCase()}
@@ -174,6 +212,38 @@ const ContactList = () => {
                                     {contact.message}
                                 </div>
                             </div>
+                            {contact.category &&
+                                (() => {
+                                    const catCfg = getCategoryConfig(
+                                        contact.category,
+                                    );
+                                    const CatIcon = catCfg.icon;
+                                    return (
+                                        <span
+                                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${catCfg.color}`}
+                                        >
+                                            <CatIcon className='w-3 h-3' />
+                                            {catCfg.label}
+                                        </span>
+                                    );
+                                })()}
+                            {contact.pageUrl && (
+                                <a
+                                    href={contact.pageUrl}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline'
+                                >
+                                    <ExternalLink className='w-3 h-3' />
+                                    Page URL
+                                </a>
+                            )}
+                            {contact.contactNumber && (
+                                <div className='inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 ml-2'>
+                                    <Phone className='w-3 h-3' />
+                                    {contact.contactNumber}
+                                </div>
+                            )}
                         </div>
 
                         <div className='mt-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
@@ -200,7 +270,7 @@ const ContactList = () => {
                         <div className='mt-4 flex items-center justify-between'>
                             <span
                                 className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium shadow-sm ${getStatusBadgeColor(
-                                    contact.status
+                                    contact.status,
                                 )}`}
                             >
                                 <span className='w-2 h-2 mr-1 rounded-full bg-white/80'></span>
@@ -214,7 +284,7 @@ const ContactList = () => {
                                 onChange={(e) =>
                                     handleStatusUpdate(
                                         contact._id,
-                                        e.target.value
+                                        e.target.value,
                                     )
                                 }
                             >
@@ -242,6 +312,9 @@ const ContactList = () => {
                         <tr>
                             <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
                                 Contact Info
+                            </th>
+                            <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
+                                Category
                             </th>
                             <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
                                 Subject
@@ -273,10 +346,10 @@ const ContactList = () => {
                                                 index % 4 === 0
                                                     ? 'from-blue-500 to-cyan-500'
                                                     : index % 4 === 1
-                                                    ? 'from-purple-500 to-pink-500'
-                                                    : index % 4 === 2
-                                                    ? 'from-green-500 to-emerald-500'
-                                                    : 'from-orange-500 to-red-500'
+                                                      ? 'from-purple-500 to-pink-500'
+                                                      : index % 4 === 2
+                                                        ? 'from-green-500 to-emerald-500'
+                                                        : 'from-orange-500 to-red-500'
                                             } group-hover:scale-110 transition-transform duration-200`}
                                         >
                                             {contact.name
@@ -293,6 +366,22 @@ const ContactList = () => {
                                         </div>
                                     </div>
                                 </td>
+                                <td className='px-6 py-6 whitespace-nowrap'>
+                                    {(() => {
+                                        const catCfg = getCategoryConfig(
+                                            contact.category,
+                                        );
+                                        const CatIcon = catCfg.icon;
+                                        return (
+                                            <span
+                                                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${catCfg.color}`}
+                                            >
+                                                <CatIcon className='w-3.5 h-3.5' />
+                                                {catCfg.label}
+                                            </span>
+                                        );
+                                    })()}
+                                </td>
                                 <td className='px-6 py-6'>
                                     <div className='text-sm text-gray-900 dark:text-white'>
                                         {contact.subject}
@@ -302,6 +391,28 @@ const ContactList = () => {
                                     <div className='text-sm text-gray-500 dark:text-gray-400 max-w-xs'>
                                         {contact.message}
                                     </div>
+                                    {(contact.pageUrl ||
+                                        contact.contactNumber) && (
+                                        <div className='flex items-center gap-3 mt-1.5'>
+                                            {contact.pageUrl && (
+                                                <a
+                                                    href={contact.pageUrl}
+                                                    target='_blank'
+                                                    rel='noopener noreferrer'
+                                                    className='inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline'
+                                                >
+                                                    <ExternalLink className='w-3 h-3' />
+                                                    Page
+                                                </a>
+                                            )}
+                                            {contact.contactNumber && (
+                                                <span className='inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400'>
+                                                    <Phone className='w-3 h-3' />
+                                                    {contact.contactNumber}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                                 </td>
                                 <td className='px-6 py-6 whitespace-nowrap'>
                                     <div className='text-xs text-gray-500 dark:text-gray-400'>
@@ -314,7 +425,7 @@ const ContactList = () => {
                                 <td className='px-6 py-6 whitespace-nowrap'>
                                     <span
                                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium shadow-sm ${getStatusBadgeColor(
-                                            contact.status
+                                            contact.status,
                                         )} group-hover:scale-105 transition-transform duration-200`}
                                     >
                                         <span className='w-2 h-2 mr-1 rounded-full bg-white/80'></span>
@@ -332,7 +443,7 @@ const ContactList = () => {
                                         onChange={(e) =>
                                             handleStatusUpdate(
                                                 contact._id,
-                                                e.target.value
+                                                e.target.value,
                                             )
                                         }
                                     >
