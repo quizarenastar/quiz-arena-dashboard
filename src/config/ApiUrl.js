@@ -32,6 +32,10 @@ const ApiUrl = {
         DELETE_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}`,
         ALL_QUIZZES: `${BASE_URL}/quizzes`,
         QUIZ_DETAILS: (quizId) => `${BASE_URL}/quizzes/${quizId}/review`,
+        QUIZ_FULL_DETAIL: (quizId) => `${BASE_URL}/quizzes/${quizId}/detail`,
+        CANCEL_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}/cancel`,
+        REVOKE_REWARD: (quizId) =>
+            `${BASE_URL}/quizzes/${quizId}/revoke-reward`,
     },
 
     WALLET: {

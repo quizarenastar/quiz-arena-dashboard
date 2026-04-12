@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     CheckCircle,
     XCircle,
@@ -6,7 +7,6 @@ import {
     Clock,
     Users,
     DollarSign,
-    AlertTriangle,
     Search,
     Trash2,
 } from 'lucide-react';
@@ -15,14 +15,12 @@ import QuizService from '../service/QuizService';
 import { formatDate } from '../utils/format';
 
 const QuizManagement = () => {
+    const navigate = useNavigate();
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
+    const [pricingFilter, setPricingFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedQuiz, setSelectedQuiz] = useState(null);
-    const [showQuizModal, setShowQuizModal] = useState(false);
-    const [showRejectModal, setShowRejectModal] = useState(false);
-    const [rejectionReason, setRejectionReason] = useState('');
     const [actionLoading, setActionLoading] = useState(false);
     const [viewMode, setViewMode] = useState('table');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -30,7 +28,7 @@ const QuizManagement = () => {
 
     useEffect(() => {
         fetchQuizzes();
-    }, [filter]);
+    }, [filter, pricingFilter]);
 
     useEffect(() => {
         const mediaQuery = window.matchMedia('(min-width: 768px)');
@@ -51,10 +49,14 @@ const QuizManagement = () => {
     const fetchQuizzes = async () => {
         try {
             setLoading(true);
+            const params = { status: filter };
+            if (pricingFilter !== 'all') {
+                params.isPaid = pricingFilter === 'paid' ? 'true' : 'false';
+            }
             const response =
                 filter === 'pending'
                     ? await QuizService.getPendingQuizzes()
-                    : await QuizService.getAllQuizzes({ status: filter });
+                    : await QuizService.getAllQuizzes(params);
             setQuizzes(response.data.quizzes || []);
         } catch (error) {
             toast.error(error.message || 'Failed to fetch quizzes');
@@ -70,43 +72,11 @@ const QuizManagement = () => {
             await QuizService.approveQuiz(quizId, feedback);
             toast.success('Quiz approved successfully!');
             fetchQuizzes();
-            setShowQuizModal(false);
         } catch (error) {
             toast.error(error.message || 'Failed to approve quiz');
             console.error('Approve Quiz Error:', error);
         } finally {
             setActionLoading(false);
-        }
-    };
-
-    const handleRejectQuiz = async (quizId, reason) => {
-        if (!reason.trim()) {
-            toast.error('Please provide a reason for rejection');
-            return;
-        }
-
-        setActionLoading(true);
-        try {
-            await QuizService.rejectQuiz(quizId, reason);
-            toast.success('Quiz rejected successfully!');
-            fetchQuizzes();
-            setShowQuizModal(false);
-        } catch (error) {
-            toast.error(error.message || 'Failed to reject quiz');
-            console.error('Reject Quiz Error:', error);
-        } finally {
-            setActionLoading(false);
-        }
-    };
-
-    const openQuizModal = async (quiz) => {
-        try {
-            const response = await QuizService.getQuizDetails(quiz._id);
-            setSelectedQuiz(response.data.quiz);
-            setShowQuizModal(true);
-        } catch (error) {
-            toast.error('Failed to fetch quiz details');
-            console.error('Quiz Details Error:', error);
         }
     };
 
@@ -124,10 +94,6 @@ const QuizManagement = () => {
             toast.success('Quiz deleted successfully!');
             setShowDeleteConfirm(false);
             setQuizToDelete(null);
-            if (showQuizModal && selectedQuiz?._id === quizToDelete._id) {
-                setShowQuizModal(false);
-                setSelectedQuiz(null);
-            }
             fetchQuizzes();
         } catch (error) {
             toast.error(error.message || 'Failed to delete quiz');
@@ -175,26 +141,30 @@ const QuizManagement = () => {
 
     return (
         <>
-        <div className='min-h-screen p-6'>
-            <div className='max-w-7xl mx-auto'>
-                {/* Header */}
-                <div className='mb-6'>
-                    <h1 className='text-3xl font-bold text-gray-900 dark:text-white mb-2'>
-                        Quiz Management
-                    </h1>
-                    <p className='text-gray-600 dark:text-gray-400'>
-                        Review and manage quiz submissions
-                    </p>
-                </div>
+            <div className='min-h-screen p-6'>
+                <div className='max-w-7xl mx-auto'>
+                    {/* Header */}
+                    <div className='mb-6'>
+                        <h1 className='text-3xl font-bold text-gray-900 dark:text-white mb-2'>
+                            Quiz Management
+                        </h1>
+                        <p className='text-gray-600 dark:text-gray-400'>
+                            Review and manage quiz submissions
+                        </p>
+                    </div>
 
-                {/* Filters and Search */}
-                <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 sm:p-6 mb-6'>
-                    <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-                        {/* Status Filter */}
-                        <div className='flex items-center space-x-4'>
-                            <div className='flex space-x-2'>
-                                {['pending', 'approved', 'rejected', 'all'].map(
-                                    (status) => (
+                    {/* Filters and Search */}
+                    <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 sm:p-6 mb-6'>
+                        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+                            {/* Status Filter */}
+                            <div className='flex items-center space-x-4'>
+                                <div className='flex space-x-2'>
+                                    {[
+                                        'pending',
+                                        'approved',
+                                        'rejected',
+                                        'all',
+                                    ].map((status) => (
                                         <button
                                             key={status}
                                             onClick={() => setFilter(status)}
@@ -207,286 +177,173 @@ const QuizManagement = () => {
                                             {status.charAt(0).toUpperCase() +
                                                 status.slice(1)}
                                         </button>
-                                    )
-                                )}
+                                    ))}
+                                </div>
+
+                                {/* Pricing Filter */}
+                                <div className='flex space-x-2'>
+                                    {[
+                                        { key: 'all', label: 'All' },
+                                        { key: 'paid', label: 'Paid' },
+                                        { key: 'free', label: 'Free' },
+                                    ].map(({ key, label }) => (
+                                        <button
+                                            key={key}
+                                            onClick={() =>
+                                                setPricingFilter(key)
+                                            }
+                                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                pricingFilter === key
+                                                    ? 'bg-yellow-600 text-white'
+                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                            }`}
+                                        >
+                                            {label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* View Toggle */}
+                                <div className='flex space-x-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg'>
+                                    <button
+                                        onClick={() => setViewMode('grid')}
+                                        className={`p-2 rounded transition-colors ${
+                                            viewMode === 'grid'
+                                                ? 'bg-white dark:bg-gray-600 text-yellow-600 shadow-sm'
+                                                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                        }`}
+                                    >
+                                        <svg
+                                            className='w-5 h-5'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            viewBox='0 0 24 24'
+                                        >
+                                            <path
+                                                strokeLinecap='round'
+                                                strokeLinejoin='round'
+                                                strokeWidth={2}
+                                                d='M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'
+                                            />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('table')}
+                                        className={`p-2 rounded transition-colors ${
+                                            viewMode === 'table'
+                                                ? 'bg-white dark:bg-gray-600 text-yellow-600 shadow-sm'
+                                                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                        }`}
+                                    >
+                                        <svg
+                                            className='w-5 h-5'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            viewBox='0 0 24 24'
+                                        >
+                                            <path
+                                                strokeLinecap='round'
+                                                strokeLinejoin='round'
+                                                strokeWidth={2}
+                                                d='M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z'
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
 
-                            {/* View Toggle */}
-                            <div className='flex space-x-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg'>
-                                <button
-                                    onClick={() => setViewMode('grid')}
-                                    className={`p-2 rounded transition-colors ${
-                                        viewMode === 'grid'
-                                            ? 'bg-white dark:bg-gray-600 text-yellow-600 shadow-sm'
-                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                                    }`}
-                                >
-                                    <svg
-                                        className='w-5 h-5'
-                                        fill='none'
-                                        stroke='currentColor'
-                                        viewBox='0 0 24 24'
-                                    >
-                                        <path
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            strokeWidth={2}
-                                            d='M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'
-                                        />
-                                    </svg>
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('table')}
-                                    className={`p-2 rounded transition-colors ${
-                                        viewMode === 'table'
-                                            ? 'bg-white dark:bg-gray-600 text-yellow-600 shadow-sm'
-                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                                    }`}
-                                >
-                                    <svg
-                                        className='w-5 h-5'
-                                        fill='none'
-                                        stroke='currentColor'
-                                        viewBox='0 0 24 24'
-                                    >
-                                        <path
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            strokeWidth={2}
-                                            d='M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z'
-                                        />
-                                    </svg>
-                                </button>
+                            {/* Search */}
+                            <div className='relative'>
+                                <Search
+                                    className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
+                                    size={20}
+                                />
+                                <input
+                                    type='text'
+                                    value={searchTerm}
+                                    onChange={(e) =>
+                                        setSearchTerm(e.target.value)
+                                    }
+                                    placeholder='Search quizzes...'
+                                    className='pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:text-white'
+                                />
                             </div>
-                        </div>
-
-                        {/* Search */}
-                        <div className='relative'>
-                            <Search
-                                className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
-                                size={20}
-                            />
-                            <input
-                                type='text'
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder='Search quizzes...'
-                                className='pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:text-white'
-                            />
                         </div>
                     </div>
-                </div>
 
-                {/* Quiz List */}
-                <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden'>
-                    {filteredQuizzes.length === 0 ? (
-                        <div className='p-8 text-center'>
-                            <p className='text-gray-500 dark:text-gray-400'>
-                                No quizzes found for the selected filter.
-                            </p>
-                        </div>
-                    ) : viewMode === 'grid' ? (
-                        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6'>
-                            {filteredQuizzes.map((quiz) => (
-                                <div
-                                    key={quiz._id}
-                                    className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow'
-                                >
-                                    <div className='p-4'>
-                                        <div className='flex justify-between items-start mb-4'>
-                                            <h3 className='text-lg font-medium text-gray-900 dark:text-white line-clamp-2'>
-                                                {quiz.title}
-                                            </h3>
-                                            <span
-                                                className={`ml-2 px-2 py-1 text-xs font-medium rounded-full shrink-0 ${getStatusColor(
-                                                    quiz.status
-                                                )}`}
-                                            >
-                                                {quiz.status
-                                                    .charAt(0)
-                                                    .toUpperCase() +
-                                                    quiz.status.slice(1)}
-                                            </span>
-                                        </div>
-
-                                        <p className='text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4'>
-                                            {quiz.description}
-                                        </p>
-
-                                        <div className='flex flex-wrap gap-2 mb-4'>
-                                            <span className='px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full'>
-                                                {quiz.category}
-                                            </span>
-                                            <span
-                                                className={`px-2 py-1 text-xs rounded-full ${
-                                                    quiz.difficulty ===
-                                                    'beginner'
-                                                        ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                                                        : quiz.difficulty ===
-                                                          'intermediate'
-                                                        ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
-                                                        : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
-                                                }`}
-                                            >
-                                                {quiz.difficulty}
-                                            </span>
-                                            {quiz.isPaid && (
-                                                <span className='flex items-center px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full'>
-                                                    <DollarSign
-                                                        size={12}
-                                                        className='mr-1'
-                                                    />
-                                                    ₹{quiz.price}
+                    {/* Quiz List */}
+                    <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden'>
+                        {filteredQuizzes.length === 0 ? (
+                            <div className='p-8 text-center'>
+                                <p className='text-gray-500 dark:text-gray-400'>
+                                    No quizzes found for the selected filter.
+                                </p>
+                            </div>
+                        ) : viewMode === 'grid' ? (
+                            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6'>
+                                {filteredQuizzes.map((quiz) => (
+                                    <div
+                                        key={quiz._id}
+                                        className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow'
+                                    >
+                                        <div className='p-4'>
+                                            <div className='flex justify-between items-start mb-4'>
+                                                <h3
+                                                    className='text-lg font-medium text-gray-900 dark:text-white line-clamp-2 hover:text-yellow-600 dark:hover:text-yellow-400 cursor-pointer'
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/quiz-management/${quiz._id}`,
+                                                        )
+                                                    }
+                                                >
+                                                    {quiz.title}
+                                                </h3>
+                                                <span
+                                                    className={`ml-2 px-2 py-1 text-xs font-medium rounded-full shrink-0 ${getStatusColor(
+                                                        quiz.status,
+                                                    )}`}
+                                                >
+                                                    {quiz.status
+                                                        .charAt(0)
+                                                        .toUpperCase() +
+                                                        quiz.status.slice(1)}
                                                 </span>
-                                            )}
-                                        </div>
-
-                                        <div className='border-t border-gray-200 dark:border-gray-700 -mx-4 px-4 pt-4'>
-                                            <div className='flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4'>
-                                                <div className='flex items-center'>
-                                                    <Users
-                                                        size={14}
-                                                        className='mr-1'
-                                                    />
-                                                    {quiz.questions?.length ||
-                                                        0}{' '}
-                                                    Q
-                                                </div>
-                                                <div className='flex items-center'>
-                                                    <Clock
-                                                        size={14}
-                                                        className='mr-1'
-                                                    />
-                                                    {quiz.timeLimit}m
-                                                </div>
-                                                <div className='flex items-center'>
-                                                    <Eye
-                                                        size={14}
-                                                        className='mr-1'
-                                                    />
-                                                    {quiz.attemptCount || 0}
-                                                </div>
                                             </div>
 
-                                            <div className='flex gap-2 justify-end flex-wrap'>
-                                                <button
-                                                    onClick={() => openQuizModal(quiz)}
-                                                    className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md inline-flex items-center'
+                                            <p className='text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4'>
+                                                {quiz.description}
+                                            </p>
+
+                                            <div className='flex flex-wrap gap-2 mb-4'>
+                                                <span className='px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full'>
+                                                    {quiz.category}
+                                                </span>
+                                                <span
+                                                    className={`px-2 py-1 text-xs rounded-full ${
+                                                        quiz.difficulty ===
+                                                        'beginner'
+                                                            ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                                                            : quiz.difficulty ===
+                                                                'intermediate'
+                                                              ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
+                                                              : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                                                    }`}
                                                 >
-                                                    <Eye size={12} className='mr-1' />
-                                                    Review
-                                                </button>
-                                                {quiz.status === 'pending' && (
-                                                    <>
-                                                        <button
-                                                            onClick={() => handleApproveQuiz(quiz._id)}
-                                                            disabled={actionLoading}
-                                                            className='px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-md inline-flex items-center'
-                                                        >
-                                                            <CheckCircle size={12} className='mr-1' />
-                                                            Approve
-                                                        </button>
-                                                        <button
-                                                            onClick={() => openQuizModal(quiz)}
-                                                            className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md inline-flex items-center'
-                                                        >
-                                                            <XCircle size={12} className='mr-1' />
-                                                            Reject
-                                                        </button>
-                                                    </>
+                                                    {quiz.difficulty}
+                                                </span>
+                                                {quiz.isPaid && (
+                                                    <span className='flex items-center px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full'>
+                                                        <DollarSign
+                                                            size={12}
+                                                            className='mr-1'
+                                                        />
+                                                        ₹{quiz.price}
+                                                    </span>
                                                 )}
-                                                <button
-                                                    onClick={(e) => confirmDeleteQuiz(quiz, e)}
-                                                    className='px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md inline-flex items-center'
-                                                    title='Delete quiz permanently'
-                                                >
-                                                    <Trash2 size={12} className='mr-1' />
-                                                    Delete
-                                                </button>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className='overflow-x-auto'>
-                            <table className='w-full'>
-                                <thead className='bg-gray-50 dark:bg-gray-700'>
-                                    <tr>
-                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
-                                            Quiz Details
-                                        </th>
-                                        <th className='hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
-                                            Creator
-                                        </th>
-                                        <th className='hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
-                                            Stats
-                                        </th>
-                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
-                                            Status
-                                        </th>
-                                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className='divide-y divide-gray-200 dark:divide-gray-700'>
-                                    {filteredQuizzes.map((quiz) => (
-                                        <tr
-                                            key={quiz._id}
-                                            className='hover:bg-gray-50 dark:hover:bg-gray-700'
-                                        >
-                                            <td className='px-6 py-4'>
-                                                <div>
-                                                    <h3 className='text-sm font-medium text-gray-900 dark:text-white'>
-                                                        {quiz.title}
-                                                    </h3>
-                                                    <p className='text-sm text-gray-500 dark:text-gray-400 line-clamp-2'>
-                                                        {quiz.description}
-                                                    </p>
-                                                    <div className='mt-2 flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400'>
-                                                        <span className='px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full'>
-                                                            {quiz.category}
-                                                        </span>
-                                                        <span
-                                                            className={`px-2 py-1 rounded-full ${
-                                                                quiz.difficulty ===
-                                                                'beginner'
-                                                                    ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                                                                    : quiz.difficulty ===
-                                                                      'intermediate'
-                                                                    ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
-                                                                    : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
-                                                            }`}
-                                                        >
-                                                            {quiz.difficulty}
-                                                        </span>
-                                                        {quiz.isPaid && (
-                                                            <span className='flex items-center text-green-600'>
-                                                                <DollarSign
-                                                                    size={12}
-                                                                />
-                                                                ₹{quiz.price}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className='hidden md:table-cell px-6 py-4'>
-                                                <div>
-                                                    <p className='text-sm font-medium text-gray-900 dark:text-white'>
-                                                        {quiz.creator?.name ||
-                                                            'no name'}
-                                                    </p>
-                                                    <p className='text-sm text-gray-500 dark:text-gray-400'>
-                                                        {quiz.creator?.email ||
-                                                            'no email'}
-                                                    </p>
-                                                </div>
-                                            </td>
-                                            <td className='hidden lg:table-cell px-6 py-4'>
-                                                <div className='flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400'>
+
+                                            <div className='border-t border-gray-200 dark:border-gray-700 -mx-4 px-4 pt-4'>
+                                                <div className='flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4'>
                                                     <div className='flex items-center'>
                                                         <Users
                                                             size={14}
@@ -494,7 +351,7 @@ const QuizManagement = () => {
                                                         />
                                                         {quiz.questions
                                                             ?.length || 0}{' '}
-                                                        questions
+                                                        Q
                                                     </div>
                                                     <div className='flex items-center'>
                                                         <Clock
@@ -508,446 +365,361 @@ const QuizManagement = () => {
                                                             size={14}
                                                             className='mr-1'
                                                         />
-                                                        {quiz.attemptCount || 0}{' '}
-                                                        attempts
+                                                        {quiz.attemptCount || 0}
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td className='px-6 py-4'>
-                                                <span
-                                                    className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
-                                                        quiz.status
-                                                    )}`}
-                                                >
-                                                    {quiz.status
-                                                        .charAt(0)
-                                                        .toUpperCase() +
-                                                        quiz.status.slice(1)}
-                                                </span>
-                                                {quiz.status === 'pending' && (
-                                                    <div className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
-                                                        Submitted{' '}
-                                                        {formatDate(
-                                                            quiz.createdAt
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td className='px-6 py-4'>
-                                                <div className='flex flex-wrap gap-2'>
-                                                    <button
-                                                        onClick={() => openQuizModal(quiz)}
-                                                        className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md'
-                                                    >
-                                                        <Eye size={12} className='mr-1 inline' />
-                                                        Review
-                                                    </button>
 
-                                                    {quiz.status === 'pending' && (
+                                                <div className='flex gap-2 justify-end flex-wrap'>
+                                                    <button
+                                                        onClick={() =>
+                                                            navigate(
+                                                                `/quiz-management/${quiz._id}`,
+                                                            )
+                                                        }
+                                                        className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md inline-flex items-center'
+                                                    >
+                                                        <Eye
+                                                            size={12}
+                                                            className='mr-1'
+                                                        />
+                                                        View
+                                                    </button>
+                                                    {quiz.status ===
+                                                        'pending' && (
                                                         <>
                                                             <button
-                                                                onClick={() => handleApproveQuiz(quiz._id)}
-                                                                disabled={actionLoading}
-                                                                className='px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-md'
+                                                                onClick={() =>
+                                                                    handleApproveQuiz(
+                                                                        quiz._id,
+                                                                    )
+                                                                }
+                                                                disabled={
+                                                                    actionLoading
+                                                                }
+                                                                className='px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-md inline-flex items-center'
                                                             >
-                                                                <CheckCircle size={12} className='mr-1 inline' />
+                                                                <CheckCircle
+                                                                    size={12}
+                                                                    className='mr-1'
+                                                                />
                                                                 Approve
                                                             </button>
-
                                                             <button
-                                                                onClick={() => openQuizModal(quiz)}
-                                                                className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md'
+                                                                onClick={() =>
+                                                                    navigate(
+                                                                        `/quiz-management/${quiz._id}`,
+                                                                    )
+                                                                }
+                                                                className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md inline-flex items-center'
                                                             >
-                                                                <XCircle size={12} className='mr-1 inline' />
+                                                                <XCircle
+                                                                    size={12}
+                                                                    className='mr-1'
+                                                                />
                                                                 Reject
                                                             </button>
                                                         </>
                                                     )}
-
                                                     <button
-                                                        onClick={(e) => confirmDeleteQuiz(quiz, e)}
-                                                        className='px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md'
+                                                        onClick={(e) =>
+                                                            confirmDeleteQuiz(
+                                                                quiz,
+                                                                e,
+                                                            )
+                                                        }
+                                                        className='px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md inline-flex items-center'
                                                         title='Delete quiz permanently'
                                                     >
-                                                        <Trash2 size={12} className='mr-1 inline' />
+                                                        <Trash2
+                                                            size={12}
+                                                            className='mr-1'
+                                                        />
                                                         Delete
                                                     </button>
                                                 </div>
-                                            </td>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className='overflow-x-auto'>
+                                <table className='w-full'>
+                                    <thead className='bg-gray-50 dark:bg-gray-700'>
+                                        <tr>
+                                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
+                                                Quiz Details
+                                            </th>
+                                            <th className='hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
+                                                Creator
+                                            </th>
+                                            <th className='hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
+                                                Stats
+                                            </th>
+                                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
+                                                Status
+                                            </th>
+                                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap'>
+                                                Actions
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-
-                {/* Quiz Details Modal */}
-                {showQuizModal && selectedQuiz && (
-                    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
-                        <div className='bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto'>
-                            <div className='p-6'>
-                                <div className='flex justify-between items-start mb-6'>
-                                    <div>
-                                        <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
-                                            {selectedQuiz.title}
-                                        </h2>
-                                        <p className='text-gray-600 dark:text-gray-400 mt-1'>
-                                            by {selectedQuiz.creator.name}
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={() => setShowQuizModal(false)}
-                                        className='text-gray-400 hover:text-gray-600'
-                                    >
-                                        <XCircle size={24} />
-                                    </button>
-                                </div>
-
-                                {/* Quiz Information */}
-                                <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
-                                    <div>
-                                        <h3 className='font-semibold text-gray-900 dark:text-white mb-2'>
-                                            Quiz Details
-                                        </h3>
-                                        <div className='space-y-2 text-sm'>
-                                            <p>
-                                                <span className='font-medium'>
-                                                    Category:
-                                                </span>{' '}
-                                                {selectedQuiz.category}
-                                            </p>
-                                            <p>
-                                                <span className='font-medium'>
-                                                    Difficulty:
-                                                </span>{' '}
-                                                {selectedQuiz.difficulty}
-                                            </p>
-                                            <p>
-                                                <span className='font-medium'>
-                                                    Time Limit:
-                                                </span>{' '}
-                                                {selectedQuiz.timeLimit} minutes
-                                            </p>
-                                            <p>
-                                                <span className='font-medium'>
-                                                    Questions:
-                                                </span>{' '}
-                                                {selectedQuiz.questions
-                                                    ?.length || 0}
-                                            </p>
-                                            <p>
-                                                <span className='font-medium'>
-                                                    Price:
-                                                </span>{' '}
-                                                {selectedQuiz.isPaid
-                                                    ? `₹${selectedQuiz.price}`
-                                                    : 'Free'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 className='font-semibold text-gray-900 dark:text-white mb-2'>
-                                            Anti-cheat Settings
-                                        </h3>
-                                        <div className='space-y-2 text-sm'>
-                                            <div className='flex items-center'>
-                                                {selectedQuiz.settings
-                                                    ?.antiCheat
-                                                    ?.detectTabSwitch ? (
-                                                    <CheckCircle
-                                                        size={16}
-                                                        className='text-green-500 mr-2'
-                                                    />
-                                                ) : (
-                                                    <XCircle
-                                                        size={16}
-                                                        className='text-red-500 mr-2'
-                                                    />
-                                                )}
-                                                Tab Switch Detection
-                                            </div>
-                                            <div className='flex items-center'>
-                                                {selectedQuiz.settings
-                                                    ?.antiCheat
-                                                    ?.detectCopyPaste ? (
-                                                    <CheckCircle
-                                                        size={16}
-                                                        className='text-green-500 mr-2'
-                                                    />
-                                                ) : (
-                                                    <XCircle
-                                                        size={16}
-                                                        className='text-red-500 mr-2'
-                                                    />
-                                                )}
-                                                Copy/Paste Detection
-                                            </div>
-                                            <div className='flex items-center'>
-                                                {selectedQuiz.settings
-                                                    ?.antiCheat
-                                                    ?.forceFullscreen ? (
-                                                    <CheckCircle
-                                                        size={16}
-                                                        className='text-green-500 mr-2'
-                                                    />
-                                                ) : (
-                                                    <XCircle
-                                                        size={16}
-                                                        className='text-red-500 mr-2'
-                                                    />
-                                                )}
-                                                Force Fullscreen
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Description */}
-                                <div className='mb-6'>
-                                    <h3 className='font-semibold text-gray-900 dark:text-white mb-2'>
-                                        Description
-                                    </h3>
-                                    <p className='text-gray-600 dark:text-gray-400'>
-                                        {selectedQuiz.description ||
-                                            'No description provided'}
-                                    </p>
-                                </div>
-
-                                {/* Questions — all shown */}
-                                <div className='mb-6'>
-                                    <h3 className='font-semibold text-gray-900 dark:text-white mb-2'>
-                                        Questions ({selectedQuiz.questions?.length || 0})
-                                    </h3>
-                                    <div className='space-y-3 max-h-[50vh] overflow-y-auto pr-1'>
-                                        {selectedQuiz.questions?.map((question, index) => (
-                                            <div
-                                                key={index}
-                                                className='border border-gray-200 dark:border-gray-600 rounded-lg p-4'
+                                    </thead>
+                                    <tbody className='divide-y divide-gray-200 dark:divide-gray-700'>
+                                        {filteredQuizzes.map((quiz) => (
+                                            <tr
+                                                key={quiz._id}
+                                                className='hover:bg-gray-50 dark:hover:bg-gray-700'
                                             >
-                                                <p className='font-medium text-gray-900 dark:text-white mb-2 text-sm'>
-                                                    <span className='inline-flex items-center justify-center w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-bold mr-2'>
-                                                        {index + 1}
-                                                    </span>
-                                                    {question.question || question.text}
-                                                </p>
-                                                <div className='grid grid-cols-2 gap-2 text-sm'>
-                                                    {question.options?.map((option, optIndex) => (
-                                                        <div
-                                                            key={optIndex}
-                                                            className={`p-2 rounded flex items-start gap-1.5 ${
-                                                                optIndex === question.correctAnswer
-                                                                    ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 font-medium'
-                                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                                                            }`}
+                                                <td className='px-6 py-4'>
+                                                    <div>
+                                                        <h3
+                                                            className='text-sm font-medium text-gray-900 dark:text-white hover:text-yellow-600 dark:hover:text-yellow-400 cursor-pointer'
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/quiz-management/${quiz._id}`,
+                                                                )
+                                                            }
                                                         >
-                                                            <span className='font-bold flex-shrink-0'>{String.fromCharCode(65+optIndex)}.</span>
-                                                            {option}
-                                                            {optIndex === question.correctAnswer && (
-                                                                <CheckCircle size={12} className='ml-auto flex-shrink-0 mt-0.5' />
+                                                            {quiz.title}
+                                                        </h3>
+                                                        <p className='text-sm text-gray-500 dark:text-gray-400 line-clamp-2'>
+                                                            {quiz.description}
+                                                        </p>
+                                                        <div className='mt-2 flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400'>
+                                                            <span className='px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full'>
+                                                                {quiz.category}
+                                                            </span>
+                                                            <span
+                                                                className={`px-2 py-1 rounded-full ${
+                                                                    quiz.difficulty ===
+                                                                    'beginner'
+                                                                        ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                                                                        : quiz.difficulty ===
+                                                                            'intermediate'
+                                                                          ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
+                                                                          : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                                                                }`}
+                                                            >
+                                                                {
+                                                                    quiz.difficulty
+                                                                }
+                                                            </span>
+                                                            {quiz.isPaid && (
+                                                                <span className='flex items-center text-green-600'>
+                                                                    <DollarSign
+                                                                        size={
+                                                                            12
+                                                                        }
+                                                                    />
+                                                                    ₹
+                                                                    {quiz.price}
+                                                                </span>
                                                             )}
                                                         </div>
-                                                    ))}
-                                                </div>
-                                                {question.explanation && (
-                                                    <p className='mt-2 text-xs text-gray-500 dark:text-gray-400 italic border-l-2 border-indigo-300 pl-2'>
-                                                        {question.explanation}
-                                                    </p>
-                                                )}
-                                            </div>
+                                                    </div>
+                                                </td>
+                                                <td className='hidden md:table-cell px-6 py-4'>
+                                                    <div>
+                                                        <p className='text-sm font-medium text-gray-900 dark:text-white'>
+                                                            {quiz.creator
+                                                                ?.name ||
+                                                                'no name'}
+                                                        </p>
+                                                        <p className='text-sm text-gray-500 dark:text-gray-400'>
+                                                            {quiz.creator
+                                                                ?.email ||
+                                                                'no email'}
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td className='hidden lg:table-cell px-6 py-4'>
+                                                    <div className='flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400'>
+                                                        <div className='flex items-center'>
+                                                            <Users
+                                                                size={14}
+                                                                className='mr-1'
+                                                            />
+                                                            {quiz.questions
+                                                                ?.length ||
+                                                                0}{' '}
+                                                            questions
+                                                        </div>
+                                                        <div className='flex items-center'>
+                                                            <Clock
+                                                                size={14}
+                                                                className='mr-1'
+                                                            />
+                                                            {quiz.timeLimit}m
+                                                        </div>
+                                                        <div className='flex items-center'>
+                                                            <Eye
+                                                                size={14}
+                                                                className='mr-1'
+                                                            />
+                                                            {quiz.attemptCount ||
+                                                                0}{' '}
+                                                            attempts
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className='px-6 py-4'>
+                                                    <span
+                                                        className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                                                            quiz.status,
+                                                        )}`}
+                                                    >
+                                                        {quiz.status
+                                                            .charAt(0)
+                                                            .toUpperCase() +
+                                                            quiz.status.slice(
+                                                                1,
+                                                            )}
+                                                    </span>
+                                                    {quiz.status ===
+                                                        'pending' && (
+                                                        <div className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
+                                                            Submitted{' '}
+                                                            {formatDate(
+                                                                quiz.createdAt,
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className='px-6 py-4'>
+                                                    <div className='flex flex-wrap gap-2'>
+                                                        <button
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/quiz-management/${quiz._id}`,
+                                                                )
+                                                            }
+                                                            className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md'
+                                                        >
+                                                            <Eye
+                                                                size={12}
+                                                                className='mr-1 inline'
+                                                            />
+                                                            View
+                                                        </button>
+
+                                                        {quiz.status ===
+                                                            'pending' && (
+                                                            <>
+                                                                <button
+                                                                    onClick={() =>
+                                                                        handleApproveQuiz(
+                                                                            quiz._id,
+                                                                        )
+                                                                    }
+                                                                    disabled={
+                                                                        actionLoading
+                                                                    }
+                                                                    className='px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-md'
+                                                                >
+                                                                    <CheckCircle
+                                                                        size={
+                                                                            12
+                                                                        }
+                                                                        className='mr-1 inline'
+                                                                    />
+                                                                    Approve
+                                                                </button>
+
+                                                                <button
+                                                                    onClick={() =>
+                                                                        navigate(
+                                                                            `/quiz-management/${quiz._id}`,
+                                                                        )
+                                                                    }
+                                                                    className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md'
+                                                                >
+                                                                    <XCircle
+                                                                        size={
+                                                                            12
+                                                                        }
+                                                                        className='mr-1 inline'
+                                                                    />
+                                                                    Reject
+                                                                </button>
+                                                            </>
+                                                        )}
+
+                                                        <button
+                                                            onClick={(e) =>
+                                                                confirmDeleteQuiz(
+                                                                    quiz,
+                                                                    e,
+                                                                )
+                                                            }
+                                                            className='px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md'
+                                                            title='Delete quiz permanently'
+                                                        >
+                                                            <Trash2
+                                                                size={12}
+                                                                className='mr-1 inline'
+                                                            />
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         ))}
-                                    </div>
-                                </div>
-
-                                {/* Action Buttons */}
-                                <div className='flex flex-wrap gap-3 pt-2 border-t border-gray-200 dark:border-gray-700'>
-                                    {selectedQuiz.status === 'pending' && (
-                                        <>
-                                            <button
-                                                onClick={() => handleApproveQuiz(selectedQuiz._id)}
-                                                disabled={actionLoading}
-                                                className='flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg font-medium'
-                                            >
-                                                {actionLoading ? 'Processing...' : 'Approve Quiz'}
-                                            </button>
-                                            <button
-                                                onClick={() => setShowRejectModal(true)}
-                                                disabled={actionLoading}
-                                                className='flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium'
-                                            >
-                                                Reject Quiz
-                                            </button>
-                                        </>
-                                    )}
-                                    <button
-                                        onClick={(e) => { setShowQuizModal(false); confirmDeleteQuiz(selectedQuiz, e); }}
-                                        disabled={actionLoading}
-                                        className='px-4 py-2 bg-gray-700 hover:bg-gray-800 disabled:bg-gray-400 text-white rounded-lg font-medium flex items-center gap-2'
-                                    >
-                                        <Trash2 size={14} />
-                                        Delete Quiz
-                                    </button>
-                                </div>
-
-                                {selectedQuiz.status === 'rejected' &&
-                                    selectedQuiz.rejectionReason && (
-                                        <div className='p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg'>
-                                            <div className='flex items-start'>
-                                                <AlertTriangle
-                                                    className='text-red-500 mr-2 mt-1'
-                                                    size={16}
-                                                />
-                                                <div>
-                                                    <p className='font-medium text-red-800 dark:text-red-200'>
-                                                        Rejection Reason:
-                                                    </p>
-                                                    <p className='text-red-700 dark:text-red-300 mt-1'>
-                                                        {
-                                                            selectedQuiz.rejectionReason
-                                                        }
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Rejection Modal */}
-                {showRejectModal && selectedQuiz && (
-                    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
-                        <div className='bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6'>
-                            <div className='flex items-center justify-between mb-4'>
-                                <h3 className='text-xl font-bold text-gray-900 dark:text-white flex items-center'>
-                                    <AlertTriangle
-                                        className='text-red-500 mr-2'
-                                        size={24}
-                                    />
-                                    Reject Quiz
-                                </h3>
-                                <button
-                                    onClick={() => {
-                                        setShowRejectModal(false);
-                                        setRejectionReason('');
-                                    }}
-                                    className='text-gray-400 hover:text-gray-600'
-                                >
-                                    <XCircle size={20} />
-                                </button>
-                            </div>
-
-                            <p className='text-gray-600 dark:text-gray-400 mb-4'>
-                                Quiz: <strong>{selectedQuiz.title}</strong>
-                            </p>
-
-                            <div className='mb-4'>
-                                <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                                    Rejection Reason *
-                                </label>
-                                <textarea
-                                    value={rejectionReason}
-                                    onChange={(e) =>
-                                        setRejectionReason(e.target.value)
-                                    }
-                                    rows={4}
-                                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white'
-                                    placeholder='Explain why this quiz is being rejected (minimum 10 characters)'
-                                />
-                                <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-                                    {rejectionReason.length}/500 characters
-                                </p>
-                            </div>
-
-                            <div className='flex space-x-3'>
-                                <button
-                                    onClick={() => {
-                                        setShowRejectModal(false);
-                                        setRejectionReason('');
-                                    }}
-                                    className='flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                                    disabled={actionLoading}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        if (
-                                            rejectionReason.trim().length >= 10
-                                        ) {
-                                            handleRejectQuiz(
-                                                selectedQuiz._id,
-                                                rejectionReason
-                                            );
-                                            setShowRejectModal(false);
-                                            setRejectionReason('');
-                                        } else {
-                                            toast.error(
-                                                'Reason must be at least 10 characters'
-                                            );
-                                        }
-                                    }}
-                                    disabled={
-                                        actionLoading ||
-                                        rejectionReason.trim().length < 10
-                                    }
-                                    className='flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium'
-                                >
-                                    {actionLoading
-                                        ? 'Rejecting...'
-                                        : 'Confirm Rejection'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
-
-        {/* Delete Confirmation Modal */}
-        {showDeleteConfirm && quizToDelete && (
-            <div className='fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[60] p-4'>
-                <div className='bg-white dark:bg-gray-800 rounded-lg max-w-sm w-full p-6 shadow-xl'>
-                    <div className='flex items-center gap-3 mb-4'>
-                        <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-full'>
-                            <Trash2 size={20} className='text-red-600 dark:text-red-400' />
-                        </div>
-                        <h3 className='text-lg font-bold text-gray-900 dark:text-white'>
-                            Delete Quiz
-                        </h3>
-                    </div>
-                    <p className='text-gray-600 dark:text-gray-400 mb-1'>
-                        Are you sure you want to permanently delete:
-                    </p>
-                    <p className='font-semibold text-gray-900 dark:text-white mb-5'>
-                        "{quizToDelete.title}"
-                    </p>
-                    <p className='text-xs text-red-500 mb-5'>
-                        This action cannot be undone. All questions and attempts will be removed.
-                    </p>
-                    <div className='flex gap-3'>
-                        <button
-                            onClick={() => { setShowDeleteConfirm(false); setQuizToDelete(null); }}
-                            disabled={actionLoading}
-                            className='flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium'
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleDeleteQuiz}
-                            disabled={actionLoading}
-                            className='flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium flex items-center justify-center gap-2'
-                        >
-                            <Trash2 size={14} />
-                            {actionLoading ? 'Deleting...' : 'Yes, Delete'}
-                        </button>
+                        )}
                     </div>
                 </div>
             </div>
-        )}
 
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && quizToDelete && (
+                <div className='fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[60] p-4'>
+                    <div className='bg-white dark:bg-gray-800 rounded-lg max-w-sm w-full p-6 shadow-xl'>
+                        <div className='flex items-center gap-3 mb-4'>
+                            <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-full'>
+                                <Trash2
+                                    size={20}
+                                    className='text-red-600 dark:text-red-400'
+                                />
+                            </div>
+                            <h3 className='text-lg font-bold text-gray-900 dark:text-white'>
+                                Delete Quiz
+                            </h3>
+                        </div>
+                        <p className='text-gray-600 dark:text-gray-400 mb-1'>
+                            Are you sure you want to permanently delete:
+                        </p>
+                        <p className='font-semibold text-gray-900 dark:text-white mb-5'>
+                            "{quizToDelete.title}"
+                        </p>
+                        <p className='text-xs text-red-500 mb-5'>
+                            This action cannot be undone. All questions and
+                            attempts will be removed.
+                        </p>
+                        <div className='flex gap-3'>
+                            <button
+                                onClick={() => {
+                                    setShowDeleteConfirm(false);
+                                    setQuizToDelete(null);
+                                }}
+                                disabled={actionLoading}
+                                className='flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium'
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteQuiz}
+                                disabled={actionLoading}
+                                className='flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium flex items-center justify-center gap-2'
+                            >
+                                <Trash2 size={14} />
+                                {actionLoading ? 'Deleting...' : 'Yes, Delete'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };
