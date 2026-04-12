@@ -7,6 +7,7 @@ const WalletManagement = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
+    const [typeFilter, setTypeFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -17,9 +18,9 @@ const WalletManagement = () => {
     const fetchTransactions = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await WalletService.getTransactions({
-                status: filter,
-            });
+            const params = { status: filter };
+            if (typeFilter !== 'all') params.type = typeFilter;
+            const response = await WalletService.getTransactions(params);
             setTransactions(response.data.transactions || []);
         } catch (error) {
             toast.error(error.message || 'Failed to fetch transactions');
@@ -27,7 +28,7 @@ const WalletManagement = () => {
         } finally {
             setLoading(false);
         }
-    }, [filter]);
+    }, [filter, typeFilter]);
 
     useEffect(() => {
         fetchTransactions();
@@ -143,6 +144,8 @@ const WalletManagement = () => {
             withdrawal: 'Withdrawal',
             earning: 'Quiz Earning',
             refund: 'Refund',
+            bonus: 'Bonus',
+            penalty: 'Penalty',
         };
         return labels[type] || type;
     };
@@ -205,9 +208,24 @@ const WalletManagement = () => {
                                             {status.charAt(0).toUpperCase() +
                                                 status.slice(1)}
                                         </button>
-                                    )
+                                    ),
                                 )}
                             </div>
+
+                            {/* Type Filter */}
+                            <select
+                                value={typeFilter}
+                                onChange={(e) => setTypeFilter(e.target.value)}
+                                className='px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm'
+                            >
+                                <option value='all'>All Types</option>
+                                <option value='payment'>Fund Addition</option>
+                                <option value='withdrawal'>Withdrawal</option>
+                                <option value='earning'>Quiz Earning</option>
+                                <option value='refund'>Refund</option>
+                                <option value='bonus'>Bonus</option>
+                                <option value='penalty'>Penalty</option>
+                            </select>
 
                             {/* View Toggle */}
                             <div className='flex space-x-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg'>
@@ -293,7 +311,7 @@ const WalletManagement = () => {
                                             <div className='space-y-1'>
                                                 <h3 className='text-lg font-medium text-gray-900 dark:text-white'>
                                                     {getTypeLabel(
-                                                        transaction.type
+                                                        transaction.type,
                                                     )}
                                                 </h3>
                                                 <p className='text-sm text-gray-500 dark:text-gray-400'>
@@ -303,7 +321,7 @@ const WalletManagement = () => {
                                             </div>
                                             <span
                                                 className={`ml-2 px-2 py-1 text-xs font-medium rounded-full shrink-0 ${getStatusColor(
-                                                    transaction.status
+                                                    transaction.status,
                                                 )}`}
                                             >
                                                 {transaction.status
@@ -320,7 +338,7 @@ const WalletManagement = () => {
                                             </span>
                                             <span className='text-sm text-gray-500 dark:text-gray-400'>
                                                 {new Date(
-                                                    transaction.createdAt
+                                                    transaction.createdAt,
                                                 ).toLocaleDateString('en-IN', {
                                                     year: 'numeric',
                                                     month: 'short',
@@ -355,7 +373,7 @@ const WalletManagement = () => {
                                                 <button
                                                     onClick={() =>
                                                         openTransactionModal(
-                                                            transaction
+                                                            transaction,
                                                         )
                                                     }
                                                     className='px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-md inline-flex items-center'
@@ -450,7 +468,7 @@ const WalletManagement = () => {
                                                         <td className='px-6 py-4 whitespace-nowrap'>
                                                             <span className='text-sm text-gray-900 dark:text-white'>
                                                                 {getTypeLabel(
-                                                                    transaction.type
+                                                                    transaction.type,
                                                                 )}
                                                             </span>
                                                         </td>
@@ -465,7 +483,7 @@ const WalletManagement = () => {
                                                         <td className='px-6 py-4 whitespace-nowrap'>
                                                             <span
                                                                 className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                                                                    transaction.status
+                                                                    transaction.status,
                                                                 )}`}
                                                             >
                                                                 {
@@ -475,14 +493,14 @@ const WalletManagement = () => {
                                                         </td>
                                                         <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400'>
                                                             {new Date(
-                                                                transaction.createdAt
+                                                                transaction.createdAt,
                                                             ).toLocaleDateString(
                                                                 'en-IN',
                                                                 {
                                                                     year: 'numeric',
                                                                     month: 'short',
                                                                     day: 'numeric',
-                                                                }
+                                                                },
                                                             )}
                                                         </td>
                                                         <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
@@ -491,7 +509,7 @@ const WalletManagement = () => {
                                                                 <button
                                                                     onClick={() =>
                                                                         openTransactionModal(
-                                                                            transaction
+                                                                            transaction,
                                                                         )
                                                                     }
                                                                     className='text-yellow-600 hover:text-yellow-900'
@@ -527,7 +545,7 @@ const WalletManagement = () => {
                                                             </tr>
                                                         )}
                                                 </React.Fragment>
-                                            )
+                                            ),
                                         )
                                     )}
                                 </tbody>
@@ -632,7 +650,7 @@ const WalletManagement = () => {
                                         <p className='text-gray-900 dark:text-white'>
                                             {JSON.stringify(
                                                 selectedTransaction.metadata
-                                                    .accountDetails
+                                                    .accountDetails,
                                             )}
                                         </p>
                                     </div>
@@ -644,7 +662,7 @@ const WalletManagement = () => {
                                     </p>
                                     <p className='text-gray-900 dark:text-white'>
                                         {new Date(
-                                            selectedTransaction.createdAt
+                                            selectedTransaction.createdAt,
                                         ).toLocaleString('en-IN')}
                                     </p>
                                 </div>
@@ -689,7 +707,7 @@ const WalletManagement = () => {
                                             <button
                                                 onClick={() =>
                                                     handleApproveFundAddition(
-                                                        selectedTransaction._id
+                                                        selectedTransaction._id,
                                                     )
                                                 }
                                                 disabled={actionLoading}
@@ -706,7 +724,7 @@ const WalletManagement = () => {
                                                 onClick={() =>
                                                     handleRejectFundAddition(
                                                         selectedTransaction._id,
-                                                        rejectReason
+                                                        rejectReason,
                                                     )
                                                 }
                                                 disabled={actionLoading}
@@ -727,7 +745,7 @@ const WalletManagement = () => {
                                         <button
                                             onClick={() =>
                                                 handleApproveWithdrawal(
-                                                    selectedTransaction._id
+                                                    selectedTransaction._id,
                                                 )
                                             }
                                             disabled={actionLoading}
@@ -744,7 +762,7 @@ const WalletManagement = () => {
                                             onClick={() =>
                                                 handleRejectWithdrawal(
                                                     selectedTransaction._id,
-                                                    rejectReason
+                                                    rejectReason,
                                                 )
                                             }
                                             disabled={actionLoading}
