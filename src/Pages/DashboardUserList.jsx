@@ -39,7 +39,7 @@ const DashboardUserList = () => {
             } else {
                 setError(response.message);
                 toast.error(
-                    response.message || 'Failed to load dashboard users'
+                    response.message || 'Failed to load dashboard users',
                 );
             }
         } catch (err) {
@@ -53,7 +53,7 @@ const DashboardUserList = () => {
     const filteredUsers = dashboardUsers.filter(
         (user) =>
             user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())
+            user.email.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
     const renderUserGrid = (users) => (
@@ -71,10 +71,10 @@ const DashboardUserList = () => {
                                     index % 4 === 0
                                         ? 'from-blue-500 to-cyan-500'
                                         : index % 4 === 1
-                                        ? 'from-purple-500 to-pink-500'
-                                        : index % 4 === 2
-                                        ? 'from-green-500 to-emerald-500'
-                                        : 'from-orange-500 to-red-500'
+                                          ? 'from-purple-500 to-pink-500'
+                                          : index % 4 === 2
+                                            ? 'from-green-500 to-emerald-500'
+                                            : 'from-orange-500 to-red-500'
                                 }`}
                             >
                                 {user.name.charAt(0).toUpperCase()}
@@ -91,16 +91,6 @@ const DashboardUserList = () => {
 
                         {/* Status Badge */}
                         <div className='flex items-center justify-between mb-4'>
-                            <span
-                                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
-                                    user.active
-                                        ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white'
-                                        : 'bg-gradient-to-r from-red-400 to-pink-500 text-white'
-                                }`}
-                            >
-                                <span className='w-2 h-2 mr-2 rounded-full bg-white/80'></span>
-                                {user.active ? 'Active' : 'Inactive'}
-                            </span>
                             <span className='inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 dark:from-indigo-900/30 dark:to-purple-900/30 dark:text-indigo-300'>
                                 {user.role || 'User'}
                             </span>
@@ -114,7 +104,7 @@ const DashboardUserList = () => {
                                     </p>
                                     <p className='text-gray-900 dark:text-white'>
                                         {new Date(
-                                            user.createdAt
+                                            user.createdAt,
                                         ).toLocaleDateString('en-US', {
                                             month: 'short',
                                             day: 'numeric',
@@ -128,7 +118,7 @@ const DashboardUserList = () => {
                                     </p>
                                     <p className='text-gray-900 dark:text-white'>
                                         {new Date(
-                                            user.updatedAt
+                                            user.updatedAt,
                                         ).toLocaleDateString('en-US', {
                                             month: 'short',
                                             day: 'numeric',
@@ -157,9 +147,7 @@ const DashboardUserList = () => {
                         <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
                             User Information
                         </th>
-                        <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
-                            Status
-                        </th>
+
                         <th className='px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider'>
                             Role
                         </th>
@@ -184,10 +172,10 @@ const DashboardUserList = () => {
                                             index % 4 === 0
                                                 ? 'from-blue-500 to-cyan-500'
                                                 : index % 4 === 1
-                                                ? 'from-purple-500 to-pink-500'
-                                                : index % 4 === 2
-                                                ? 'from-green-500 to-emerald-500'
-                                                : 'from-orange-500 to-red-500'
+                                                  ? 'from-purple-500 to-pink-500'
+                                                  : index % 4 === 2
+                                                    ? 'from-green-500 to-emerald-500'
+                                                    : 'from-orange-500 to-red-500'
                                         } group-hover:scale-110 transition-transform duration-200`}
                                     >
                                         {user.name.charAt(0).toUpperCase()}
@@ -202,18 +190,7 @@ const DashboardUserList = () => {
                                     </div>
                                 </div>
                             </td>
-                            <td className='px-6 py-6 whitespace-nowrap'>
-                                <span
-                                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
-                                        user.active
-                                            ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white'
-                                            : 'bg-gradient-to-r from-red-400 to-pink-500 text-white'
-                                    } group-hover:scale-105 transition-transform duration-200`}
-                                >
-                                    <span className='w-2 h-2 mr-2 rounded-full bg-white/80'></span>
-                                    {user.active ? 'Active' : 'Inactive'}
-                                </span>
-                            </td>
+
                             <td className='px-6 py-6 whitespace-nowrap'>
                                 <span className='inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 dark:from-indigo-900/30 dark:to-purple-900/30 dark:text-indigo-300'>
                                     {user.role || 'User'}
@@ -226,7 +203,7 @@ const DashboardUserList = () => {
                                         year: 'numeric',
                                         month: 'short',
                                         day: 'numeric',
-                                    }
+                                    },
                                 )}
                             </td>
                             <td className='px-6 py-6 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400'>
@@ -236,7 +213,7 @@ const DashboardUserList = () => {
                                         year: 'numeric',
                                         month: 'short',
                                         day: 'numeric',
-                                    }
+                                    },
                                 )}
                             </td>
                         </tr>

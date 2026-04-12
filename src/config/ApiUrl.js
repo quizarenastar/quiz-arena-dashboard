@@ -9,6 +9,9 @@ const ApiUrl = {
     USERS: {
         USER_LIST: `${BASE_URL}/users/userlist`,
         DASHBOARD_USER_LIST: `${BASE_URL}/users/dashboarduserlist`,
+        USER_DETAIL: (userId) => `${BASE_URL}/users/userlist/${userId}`,
+        GIVE_BONUS: (userId) => `${BASE_URL}/users/userlist/${userId}/bonus`,
+        GIVE_BONUS_ALL: `${BASE_URL}/users/bonus-all`,
     },
 
     CONTACT: {

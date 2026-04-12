@@ -186,9 +186,11 @@ const QuizDetail = () => {
     };
 
     const formatDuration = (seconds) => {
+        console.log(seconds);
+
         if (!seconds) return '—';
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
+        const m = Math.floor(seconds / 1000 / 60);
+        const s = Math.floor((seconds / 1000) % 60);
         return m > 0 ? `${m}m ${s}s` : `${s}s`;
     };
 
@@ -1091,9 +1093,7 @@ const AttemptsTab = ({ attempts, formatDuration }) => (
                             <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase'>
                                 Correct
                             </th>
-                            <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase'>
-                                Percentage
-                            </th>
+
                             <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase'>
                                 Time
                             </th>
@@ -1139,13 +1139,7 @@ const AttemptsTab = ({ attempts, formatDuration }) => (
                                     {attempt.correctAnswers}/
                                     {attempt.totalQuestions}
                                 </td>
-                                <td className='px-4 py-3'>
-                                    <span
-                                        className={`font-medium ${attempt.percentage >= 70 ? 'text-green-600' : attempt.percentage >= 40 ? 'text-yellow-600' : 'text-red-600'}`}
-                                    >
-                                        {Math.round(attempt.percentage || 0)}%
-                                    </span>
-                                </td>
+
                                 <td className='px-4 py-3 text-gray-700 dark:text-gray-300'>
                                     {formatDuration(attempt.duration)}
                                 </td>
