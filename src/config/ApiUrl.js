@@ -25,6 +25,10 @@ const ApiUrl = {
         // Analytics
         DASHBOARD_STATS: `${BASE_URL}/stats`,
         QUIZ_ANALYTICS: `${BASE_URL}/stats/analytics/quiz`,
+        USER_GROWTH: `${BASE_URL}/stats/analytics/user-growth`,
+        CATEGORY_PARTICIPATION: `${BASE_URL}/stats/analytics/category-participation`,
+        ANTI_CHEAT: `${BASE_URL}/stats/analytics/anti-cheat`,
+        REVENUE_DISTRIBUTION: `${BASE_URL}/stats/analytics/revenue-distribution`,
     },
 
     QUIZZES: {

@@ -9,6 +9,10 @@ import {
     Calendar,
     Loader2,
 } from 'lucide-react';
+import UserGrowthChart from '../Components/charts/UserGrowthChart';
+import CategoryParticipationChart from '../Components/charts/CategoryParticipationChart';
+import RevenueDistributionChart from '../Components/charts/RevenueDistributionChart';
+import AntiCheatChart from '../Components/charts/AntiCheatChart';
 
 const QuizAnalytics = () => {
     const [analytics, setAnalytics] = useState(null);
@@ -74,16 +78,32 @@ const QuizAnalytics = () => {
                 </div>
             </div>
 
+            {/* ─── INTERACTIVE CHARTS SECTION ──────────────────────── */}
+            <div className='space-y-6 mb-8'>
+                {/* Row 1: User Growth (full width) */}
+                <UserGrowthChart />
+
+                {/* Row 2: Category Participation + Revenue Distribution */}
+                <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+                    <CategoryParticipationChart />
+                    <RevenueDistributionChart />
+                </div>
+
+                {/* Row 3: Anti-Cheat Analysis (full width) */}
+                <AntiCheatChart />
+            </div>
+
+            {/* ─── EXISTING TABLE DATA ────────────────────────────── */}
             {loading ? (
                 <div className='flex items-center justify-center h-64'>
                     <Loader2 className='w-8 h-8 animate-spin text-blue-600' />
                     <span className='ml-3 text-gray-600 dark:text-gray-400'>
-                        Loading analytics...
+                        Loading table data...
                     </span>
                 </div>
             ) : analytics ? (
                 <div className='space-y-6'>
-                    {/* Quiz Trends Chart */}
+                    {/* Quiz Trends Table */}
                     <div className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6'>
                         <div className='flex items-center mb-4'>
                             <TrendingUp className='w-6 h-6 text-blue-600 mr-2' />
@@ -224,7 +244,7 @@ const QuizAnalytics = () => {
                         )}
                     </div>
 
-                    {/* Revenue Analytics */}
+                    {/* Revenue Analytics Table */}
                     <div className='bg-white dark:bg-gray-800 rounded-lg shadow-md p-6'>
                         <div className='flex items-center mb-4'>
                             <DollarSign className='w-6 h-6 text-emerald-600 mr-2' />

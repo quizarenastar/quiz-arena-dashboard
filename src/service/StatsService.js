@@ -48,6 +48,28 @@ class StatsService {
             `${ApiUrl.STATS.QUIZ_ANALYTICS}?period=${period}`
         );
     }
+
+    // Get user registration growth stats
+    async getUserGrowthStats(weeks = 14) {
+        return this.makeRequest(
+            `${ApiUrl.STATS.USER_GROWTH}?weeks=${weeks}`
+        );
+    }
+
+    // Get quiz participation by category
+    async getCategoryParticipation() {
+        return this.makeRequest(ApiUrl.STATS.CATEGORY_PARTICIPATION);
+    }
+
+    // Get anti-cheat violation statistics
+    async getAntiCheatStats() {
+        return this.makeRequest(ApiUrl.STATS.ANTI_CHEAT);
+    }
+
+    // Get revenue distribution breakdown
+    async getRevenueDistribution() {
+        return this.makeRequest(ApiUrl.STATS.REVENUE_DISTRIBUTION);
+    }
 }
 
 export default new StatsService();
