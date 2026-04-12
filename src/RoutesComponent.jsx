@@ -7,6 +7,8 @@ import DashboardUserList from './Pages/DashboardUserList';
 import Profile from './Pages/Profile';
 import ContactList from './Pages/ContactList';
 import QuizManagement from './Pages/QuizManagement';
+import QuizDetail from './Pages/QuizDetail';
+import UserDetail from './Pages/UserDetail';
 import WalletManagement from './Pages/WalletManagement';
 import QuizAnalytics from './Pages/QuizAnalytics';
 import WarRoomManagement from './Pages/WarRoomManagement';
@@ -39,6 +41,7 @@ const RoutesComponent = () => {
             <Route element={<ProtectedRoute />}>
                 <Route path='/' element={<Home />} />
                 <Route path='/userlist' element={<UserList />} />
+                <Route path='/userlist/:userId' element={<UserDetail />} />
                 <Route
                     path='/dashboarduserlist'
                     element={<DashboardUserList />}
@@ -46,6 +49,10 @@ const RoutesComponent = () => {
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/contacts' element={<ContactList />} />
                 <Route path='/quiz-management' element={<QuizManagement />} />
+                <Route
+                    path='/quiz-management/:quizId'
+                    element={<QuizDetail />}
+                />
                 <Route
                     path='/wallet-management'
                     element={<WalletManagement />}

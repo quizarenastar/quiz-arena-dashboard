@@ -9,6 +9,9 @@ const ApiUrl = {
     USERS: {
         USER_LIST: `${BASE_URL}/users/userlist`,
         DASHBOARD_USER_LIST: `${BASE_URL}/users/dashboarduserlist`,
+        USER_DETAIL: (userId) => `${BASE_URL}/users/userlist/${userId}`,
+        GIVE_BONUS: (userId) => `${BASE_URL}/users/userlist/${userId}/bonus`,
+        GIVE_BONUS_ALL: `${BASE_URL}/users/bonus-all`,
     },
 
     CONTACT: {
@@ -32,6 +35,10 @@ const ApiUrl = {
         DELETE_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}`,
         ALL_QUIZZES: `${BASE_URL}/quizzes`,
         QUIZ_DETAILS: (quizId) => `${BASE_URL}/quizzes/${quizId}/review`,
+        QUIZ_FULL_DETAIL: (quizId) => `${BASE_URL}/quizzes/${quizId}/detail`,
+        CANCEL_QUIZ: (quizId) => `${BASE_URL}/quizzes/${quizId}/cancel`,
+        REVOKE_REWARD: (quizId) =>
+            `${BASE_URL}/quizzes/${quizId}/revoke-reward`,
     },
 
     WALLET: {

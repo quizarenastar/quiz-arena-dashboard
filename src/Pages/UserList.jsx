@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Gift } from 'lucide-react';
 import UserService from '../service/UserService';
 import toast from 'react-hot-toast';
 
 const UserList = () => {
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -11,6 +14,11 @@ const UserList = () => {
     const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'active', 'blocked'
     const [balanceRange, setBalanceRange] = useState({ min: '', max: '' });
     const [viewMode, setViewMode] = useState('table');
+
+    const [showBonusAllModal, setShowBonusAllModal] = useState(false);
+    const [bonusAllAmount, setBonusAllAmount] = useState('');
+    const [bonusAllReason, setBonusAllReason] = useState('');
+    const [bonusAllLoading, setBonusAllLoading] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -116,7 +124,10 @@ const UserList = () => {
                         {filteredUsers.map((user, index) => (
                             <div
                                 key={user._id}
-                                className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden'
+                                onClick={() =>
+                                    navigate(`/userlist/${user._id}`)
+                                }
+                                className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer'
                             >
                                 <div className='p-6'>
                                     {/* User Header */}
@@ -126,10 +137,10 @@ const UserList = () => {
                                                 index % 4 === 0
                                                     ? 'from-blue-500 to-cyan-500'
                                                     : index % 4 === 1
-                                                    ? 'from-purple-500 to-pink-500'
-                                                    : index % 4 === 2
-                                                    ? 'from-green-500 to-emerald-500'
-                                                    : 'from-orange-500 to-red-500'
+                                                      ? 'from-purple-500 to-pink-500'
+                                                      : index % 4 === 2
+                                                        ? 'from-green-500 to-emerald-500'
+                                                        : 'from-orange-500 to-red-500'
                                             }`}
                                         >
                                             {user.username
@@ -187,7 +198,7 @@ const UserList = () => {
                                             <div className='text-sm text-gray-500 dark:text-gray-400'>
                                                 Joined:{' '}
                                                 {new Date(
-                                                    user.createdAt
+                                                    user.createdAt,
                                                 ).toLocaleDateString()}
                                             </div>
                                             <div className='text-sm text-gray-500 dark:text-gray-400'>
@@ -237,7 +248,10 @@ const UserList = () => {
                                 {filteredUsers.map((user, index) => (
                                     <tr
                                         key={user._id}
-                                        className='hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 dark:hover:from-gray-700/50 dark:hover:to-gray-600/50 transition-all duration-200 group'
+                                        onClick={() =>
+                                            navigate(`/userlist/${user._id}`)
+                                        }
+                                        className='hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 dark:hover:from-gray-700/50 dark:hover:to-gray-600/50 transition-all duration-200 group cursor-pointer'
                                     >
                                         <td className='px-6 py-6 whitespace-nowrap'>
                                             <div className='flex items-center'>
@@ -246,10 +260,10 @@ const UserList = () => {
                                                         index % 4 === 0
                                                             ? 'from-blue-500 to-cyan-500'
                                                             : index % 4 === 1
-                                                            ? 'from-purple-500 to-pink-500'
-                                                            : index % 4 === 2
-                                                            ? 'from-green-500 to-emerald-500'
-                                                            : 'from-orange-500 to-red-500'
+                                                              ? 'from-purple-500 to-pink-500'
+                                                              : index % 4 === 2
+                                                                ? 'from-green-500 to-emerald-500'
+                                                                : 'from-orange-500 to-red-500'
                                                     } group-hover:scale-110 transition-transform duration-200`}
                                                 >
                                                     {user.username
@@ -301,7 +315,7 @@ const UserList = () => {
                                         <td className='px-6 py-6 whitespace-nowrap'>
                                             <div className='text-sm text-gray-600 dark:text-gray-400'>
                                                 {new Date(
-                                                    user.createdAt
+                                                    user.createdAt,
                                                 ).toLocaleDateString()}
                                             </div>
                                         </td>
@@ -319,12 +333,23 @@ const UserList = () => {
         <div className='min-h-screen '>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 <div className='mb-6'>
-                    <h1 className='text-3xl font-bold text-gray-900 dark:text-white mb-2'>
-                        User Management
-                    </h1>
-                    <p className='text-gray-600 dark:text-gray-400'>
-                        Manage user accounts and permissions
-                    </p>
+                    <div className='flex items-center justify-between'>
+                        <div>
+                            <h1 className='text-3xl font-bold text-gray-900 dark:text-white mb-2'>
+                                User Management
+                            </h1>
+                            <p className='text-gray-600 dark:text-gray-400'>
+                                Manage user accounts and permissions
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setShowBonusAllModal(true)}
+                            className='inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 shadow-sm'
+                        >
+                            <Gift className='w-4 h-4' />
+                            Bonus All Users
+                        </button>
+                    </div>
                 </div>
                 {/* Search and Filters */}
                 <div className='mb-8'>
@@ -477,6 +502,101 @@ const UserList = () => {
                     renderUserTable(users.length > 0 ? users : [])
                 )}
             </div>
+
+            {/* Bonus All Users Modal */}
+            {showBonusAllModal && (
+                <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
+                    <div className='bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4'>
+                        <h3 className='text-lg font-bold text-gray-900 dark:text-white mb-4'>
+                            Give Bonus to All Active Users
+                        </h3>
+                        <div className='space-y-4'>
+                            <div>
+                                <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
+                                    Amount (₹)
+                                </label>
+                                <input
+                                    type='number'
+                                    min='1'
+                                    value={bonusAllAmount}
+                                    onChange={(e) =>
+                                        setBonusAllAmount(e.target.value)
+                                    }
+                                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500'
+                                    placeholder='Enter bonus amount'
+                                />
+                            </div>
+                            <div>
+                                <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
+                                    Reason
+                                </label>
+                                <textarea
+                                    value={bonusAllReason}
+                                    onChange={(e) =>
+                                        setBonusAllReason(e.target.value)
+                                    }
+                                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500'
+                                    rows={3}
+                                    placeholder='Reason for bonus (optional)'
+                                />
+                            </div>
+                        </div>
+                        <div className='flex justify-end gap-3 mt-6'>
+                            <button
+                                onClick={() => {
+                                    setShowBonusAllModal(false);
+                                    setBonusAllAmount('');
+                                    setBonusAllReason('');
+                                }}
+                                className='px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600'
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                disabled={!bonusAllAmount || bonusAllLoading}
+                                onClick={async () => {
+                                    const amount = parseFloat(bonusAllAmount);
+                                    if (!amount || amount <= 0) {
+                                        toast.error('Enter a valid amount');
+                                        return;
+                                    }
+                                    setBonusAllLoading(true);
+                                    try {
+                                        const res =
+                                            await UserService.giveBonusToAllUsers(
+                                                amount,
+                                                bonusAllReason,
+                                            );
+                                        if (res.success) {
+                                            toast.success(
+                                                res.message ||
+                                                    'Bonus given to all users',
+                                            );
+                                            setShowBonusAllModal(false);
+                                            setBonusAllAmount('');
+                                            setBonusAllReason('');
+                                            fetchUsers();
+                                        } else {
+                                            toast.error(
+                                                res.message || 'Failed',
+                                            );
+                                        }
+                                    } catch (err) {
+                                        toast.error('Failed to give bonus');
+                                    } finally {
+                                        setBonusAllLoading(false);
+                                    }
+                                }}
+                                className='px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 disabled:opacity-50'
+                            >
+                                {bonusAllLoading
+                                    ? 'Processing...'
+                                    : 'Give Bonus'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

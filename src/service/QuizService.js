@@ -68,6 +68,24 @@ class QuizService {
             method: 'DELETE',
         });
     }
+
+    async getQuizFullDetail(quizId) {
+        return this.makeRequest(ApiUrl.QUIZZES.QUIZ_FULL_DETAIL(quizId));
+    }
+
+    async cancelQuiz(quizId, reason) {
+        return this.makeRequest(ApiUrl.QUIZZES.CANCEL_QUIZ(quizId), {
+            method: 'POST',
+            body: JSON.stringify({ reason }),
+        });
+    }
+
+    async revokeReward(quizId, userId, reason) {
+        return this.makeRequest(ApiUrl.QUIZZES.REVOKE_REWARD(quizId), {
+            method: 'POST',
+            body: JSON.stringify({ userId, reason }),
+        });
+    }
 }
 
 export default new QuizService();
