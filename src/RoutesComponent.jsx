@@ -12,6 +12,7 @@ import UserDetail from './Pages/UserDetail';
 import WalletManagement from './Pages/WalletManagement';
 import QuizAnalytics from './Pages/QuizAnalytics';
 import WarRoomManagement from './Pages/WarRoomManagement';
+import EmailLogs from './Pages/EmailLogs';
 import NotFound from './Pages/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
 import PublicRoute from './Components/PublicRoute';
@@ -59,6 +60,7 @@ const RoutesComponent = () => {
                 />
                 <Route path='/quiz-analytics' element={<QuizAnalytics />} />
                 <Route path='/war-rooms' element={<WarRoomManagement />} />
+                <Route path='/email-logs' element={<EmailLogs />} />
             </Route>
             <Route path='*' element={<NotFound />} />
         </Routes>

@@ -67,6 +67,11 @@ const ApiUrl = {
         DETAILS: (roomId) => `${BASE_URL}/war-rooms/${roomId}`,
         DELETE: (roomId) => `${BASE_URL}/war-rooms/${roomId}`,
     },
+
+    EMAILS: {
+        LOGS: `${BASE_URL}/emails`,
+        STATS: `${BASE_URL}/emails/stats`,
+    },
 };
 
 export default ApiUrl;

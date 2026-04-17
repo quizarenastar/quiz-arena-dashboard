@@ -12,6 +12,7 @@ import {
     X,
     BarChart3,
     Swords,
+    Mail,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { hasAuthToken, clearAuthToken } from '../utils/authToken';
@@ -56,6 +57,7 @@ function Sidebar({
         { href: '/userlist', label: 'Users', icon: User },
         { href: '/dashboarduserlist', label: 'Admins', icon: Users },
         { href: '/contacts', label: 'Contact Support', icon: MessageSquare },
+        { href: '/email-logs', label: 'Email Logs', icon: Mail },
     ];
 
     const toggleSidebar = () => {
